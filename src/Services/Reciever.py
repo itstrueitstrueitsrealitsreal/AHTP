@@ -1,14 +1,32 @@
-import socket
+import asyncio
+from aioquic.asyncio import serve
+from aioquic.quic.configuration import QuicConfiguration
+from src.Objects.GameNetAPI import GameNetAPI
 
-# OPEN
-s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_UDP)
+# this is a sample i (ethan) asked ai to generate, see src/Objects/GameNetAPI.py, esp line 5 and 6
 
-# customise options
-s.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 0) #TODO since 0, we must write our own header? Can write in src/Objects/AHTP.py?
-
-# receive 
-while True:
-    packet, addr = s.recvfrom(1024)
-    print(f"Received packet from {addr}: {packet}")
-
-s.close() 
+async def create_receiver(local_port=4433, callback=None):
+    """
+    Create a GameNetAPI receiver (server).
+    
+    :param local_port: Port to listen on
+    :param callback: Function to call when packets are received
+    :return: Server task
+    """
+    configuration = QuicConfiguration(is_client=False)
+    # You'll need to generate certificates for production use
+    # For now, this is a placeholder - QUIC requires TLS
+    
+    async def handle_connection(protocol):
+        api = GameNetAPI(protocol)
+        if callback:
+            api.set_receive_callback(callback)
+        # Handle incoming events
+        # This will need to be integrated with aioquic's event loop
+    
+    return await serve(
+        "0.0.0.0",
+        local_port,
+        configuration=configuration,
+        create_protocol=handle_connection
+    )
