@@ -1,32 +1,31 @@
 import asyncio
-from aioquic.asyncio import serve
+from aioquic.asyncio import serve, QuicConnectionProtocol
 from aioquic.quic.configuration import QuicConfiguration
 from src.Objects.GameNetAPI import GameNetAPI
 
-# this is a sample i (ethan) asked ai to generate, see src/Objects/GameNetAPI.py, esp line 5 and 6
 
-async def create_receiver(local_port=4433, callback=None):
-    """
-    Create a GameNetAPI receiver (server).
-    
-    :param local_port: Port to listen on
-    :param callback: Function to call when packets are received
-    :return: Server task
-    """
-    configuration = QuicConfiguration(is_client=False)
-    # You'll need to generate certificates for production use
-    # For now, this is a placeholder - QUIC requires TLS
-    
-    async def handle_connection(protocol):
-        api = GameNetAPI(protocol)
+class GameServerProtocol(QuicConnectionProtocol):
+    def __init__(self, *args, callback=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.api = GameNetAPI(self)
         if callback:
-            api.set_receive_callback(callback)
-        # Handle incoming events
-        # This will need to be integrated with aioquic's event loop
-    
+            self.api.set_receive_callback(callback)
+
+    def quic_event_received(self, event):
+        # can be extended later for metrics or debug
+        pass
+
+
+async def create_receiver(local_port=4433, callback=None, configuration=None):
+    if configuration is None:
+        configuration = QuicConfiguration(is_client=False)
+        configuration.load_cert_chain("cert.pem", "key.pem")
+
+    print(f"[Receiver] Listening on port {local_port}")
+
     return await serve(
         "0.0.0.0",
         local_port,
         configuration=configuration,
-        create_protocol=handle_connection
+        create_protocol=lambda *args, **kwargs: GameServerProtocol(*args, callback=callback, **kwargs)
     )
