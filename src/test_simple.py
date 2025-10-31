@@ -3,7 +3,7 @@ Simple diagnostic test to check packet flow
 """
 import asyncio
 import src.Services.Sender as Sender
-import src.Services.Reciever as Reciever
+import src.Services.Reciever as Receiver
 
 
 def handle_received_packet(seqno, channel_type, payload, timestamp):
@@ -14,7 +14,7 @@ def handle_received_packet(seqno, channel_type, payload, timestamp):
 
 async def receiver_example():
     """Start the receiver/server"""
-    await Reciever.create_receiver(local_port=4433, callback=handle_received_packet)
+    await Receiver.create_receiver(local_port=4433, callback=handle_received_packet)
     await asyncio.Event().wait()
 
 
@@ -47,7 +47,7 @@ async def sender_example():
         print(f"Pending IDs:      {sorted(api.pending_acks.keys())}")
         
         if api.latency_records:
-            avg_rtt = sum(api.latency_records) / len(api.latency_records) * 1000
+            avg_rtt = sum(api.metrics.latency_records) / len(api.metrics.latency_records) * 1000
             print(f"Average RTT:      {avg_rtt:.2f} ms")
         else:
             print("Average RTT:      No ACKs received!")
@@ -60,8 +60,8 @@ async def sender_example():
             print("1. Receiver not processing packets correctly")
             print("2. ACK packets not formatted correctly") 
             print("3. Sender not detecting ACK packets")
-        elif len(api.acked_packets) < api.total_sent:
-            print(f"\n⚠️  WARNING: Only {len(api.acked_packets)}/{api.total_sent} ACKs received")
+        elif len(api.acked_packets) < api.metrics.total_sent:
+            print(f"\n⚠️  WARNING: Only {len(api.acked_packets)}/{api.metrics.total_sent} ACKs received")
         else:
             print("\n✓ SUCCESS: All packets acknowledged!")
 
