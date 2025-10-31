@@ -38,7 +38,7 @@ class GameNetAPI:
 
         # Construct packet with explicit header format
         # Header: | ChannelType (1B) | SeqNo (2B) | Timestamp (4B) | Payload |
-        timestamp = int(time.time() * 1000)  # ms since epoch
+        timestamp = int(time.time() * 1000)  & 0xFFFFFFFF  # ms since epoch
         
         # Pack header
         header = struct.pack('!BHI', channel_type, seqno, timestamp) # Format exp: ! is network byte order, B is unsigned char (1 byte), H is unsigned short (2 bytes), I is unsigned int (4 bytes)
