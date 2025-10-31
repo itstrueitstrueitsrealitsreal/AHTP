@@ -1,19 +1,88 @@
+import asyncio
+import random
 import src.Services.Sender as Sender
 import src.Services.Reciever as Reciever
 
-# For demonstration, when we finish building the sender, receiver, and GameNetAPI modules.
 
-# Sender application
-async def sender_example():
-    api = await Sender.create_sender("127.0.0.1", 4433)
-    await api.send_packet("Critical update", is_reliable=True)
-    await api.send_packet("Position update", is_reliable=False)
-
-# Receiver application
 def handle_received_packet(seqno, channel_type, payload, timestamp):
-    print(f"Received: SeqNo={seqno}, Type={channel_type}, Data={payload}, Time={timestamp}")
+    """Callback for received packets"""
+    channel_name = "RELIABLE  " if channel_type == 0 else "UNRELIABLE"
+    print(f"[Receiver] {channel_name} | SeqNo={seqno:4d} | Data='{payload[:50]}'")
+
 
 async def receiver_example():
-    server = await Reciever.create_receiver(local_port=4433, callback=handle_received_packet)
-    # Server runs until stopped
+    """Start the receiver/server"""
+    await Reciever.create_receiver(local_port=4433, callback=handle_received_packet)
+    # Keep running indefinitely
+    await asyncio.Event().wait()
 
+
+async def sender_example():
+    """Send test packets"""
+    print("\n[Sender] Starting to send packets...\n")
+    
+    # Use context manager to keep connection alive
+    async with await Sender.create_sender("127.0.0.1", 4433) as api:
+        
+        # Send some reliable packets
+        print("--- Sending Reliable Packets ---")
+        for i in range(5):
+            await api.send_packet(f"Reliable message {i+1}", is_reliable=True)
+            await asyncio.sleep(0.1)  # Small delay between packets
+        
+        # Wait for ACKs
+        await asyncio.sleep(0.5)
+        
+        # Send some unreliable packets
+        print("\n--- Sending Unreliable Packets ---")
+        for i in range(5):
+            await api.send_packet(f"Unreliable message {i+1}", is_reliable=False)
+            await asyncio.sleep(0.1)
+        
+        # Wait for packets to be processed
+        print("\n[Sender] Waiting for final packets to be processed...")
+        await asyncio.sleep(2)
+        
+        # Print metrics
+        api.compute_metrics()
+
+
+async def main():
+    """Main function"""
+    print("="*70)
+    print("CS3103 Assignment 4 - GameNetAPI Test")
+    print("="*70)
+    
+    # Start receiver in background
+    receiver_task = asyncio.create_task(receiver_example())
+    
+    # Give receiver time to start
+    print("\n[Main] Starting receiver...")
+    await asyncio.sleep(1)
+    
+    try:
+        # Run sender
+        await sender_example()
+        
+    except KeyboardInterrupt:
+        print("\n[Main] Test interrupted by user")
+    except Exception as e:
+        print(f"\n[Main] Error: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        # Clean up receiver
+        print("\n[Main] Cleaning up...")
+        receiver_task.cancel()
+        try:
+            await receiver_task
+        except asyncio.CancelledError:
+            pass
+        
+        print("\n" + "="*70)
+        print("Test Complete!")
+        print("="*70)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

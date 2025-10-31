@@ -1,13 +1,34 @@
+import asyncio
+from aioquic.asyncio.protocol import QuicConnectionProtocol
+from aioquic.quic.events import StreamDataReceived, DatagramFrameReceived
 import time
 import struct
 
+class GameNetProtocol(QuicConnectionProtocol):
+    """Extended QUIC protocol that handles events"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.api = None
+    
+    def quic_event_received(self, event):
+        """Handle QUIC events - THIS IS THE CORRECT METHOD"""
+        print(f"[DEBUG] Event received: {event.__class__.__name__}")
+        if isinstance(event, StreamDataReceived):
+            print(f"[DEBUG] StreamDataReceived event with data length {len(event.data)}")
+            # Reliable channel data (stream)
+            if self.api:
+                self.api.process_received_data(event.data, is_reliable=True)
+        elif isinstance(event, DatagramFrameReceived):
+            print(f"[DEBUG] DatagramFrameReceived event with data length {len(event.data)}")
+            # Unreliable channel data (datagram)
+            if self.api:
+                self.api.process_received_data(event.data, is_reliable=False)
+
 class GameNetAPI:
-    # For sender: Pass the QuicConnectionProtocol from connect()
-    # For receiver: Pass the QuicConnectionProtocol from the server handler
-    def __init__(self, connection): # connection: QuicConnectionProtocol instance that you pass in from client/server instantation
+    def __init__(self, connection):
         self.connection = connection
 
-        # Separate sequence number for (un)reliable channel
+        # Separate sequence numbers
         self.reliable_seqno = 0  
         self.unreliable_seqno = 0  
         
@@ -15,172 +36,210 @@ class GameNetAPI:
         self.pending_acks = {}
         
         # Receiver-side: Buffer and reordering
-        self.reliable_buffer = {}  # {seqno: (seqno, channel_type, payload, timestamp)}
-        self.packet_arrival_times = {}  # TODO use this for printing on client side: {seqno: arrival_time} 
-        self.next_expected_reliable_seqno = 1  # Next expected seqno for reliable channel
+        self.reliable_buffer = {}
+        self.packet_arrival_times = {}
+        self.next_expected_reliable_seqno = 1
         
         self.retransmit_timeout = 0.2  # 200ms default
-        self.receiver_callback = None # for sender/recver side to set callback function to do printing of logs
+        self.receiver_callback = None
         
         # Skipping lost packets after timeout
-        self.missing_packet_timers = {}  # {seqno: first_time_noticed_missing} # if want to use for printing
+        self.missing_packet_timers = {}
+
+        # Sliding window for reliable channel
+        self.window_size = 5
+        self.base = 1
+        self.next_seqno = 1
+        self.acked_packets = set()
+        
+        # Metrics
+        self.total_sent = 0
+        self.total_received = 0
+        self.latency_records = []
+        self.start_time = time.time()
 
     async def send_packet(self, data, is_reliable=True):
-        # Use separate sequence numbers for each channel
+        """Send a packet through appropriate channel"""
+        timestamp = int(time.time() * 1000) & 0xFFFFFFFF
+        
         if is_reliable:
-            self.reliable_seqno += 1
-            seqno = self.reliable_seqno
+            # Check window
+            if self.next_seqno >= self.base + self.window_size:
+                print(f"[Window full] waiting for ACKs... (base={self.base}, next={self.next_seqno})")
+                # Wait briefly for ACKs
+                await asyncio.sleep(0.05)
+                return
+
+            seqno = self.next_seqno
+            self.next_seqno += 1
             channel_type = 0
+            
         else:
             self.unreliable_seqno += 1
             seqno = self.unreliable_seqno
             channel_type = 1
 
-        # Construct packet with explicit header format
-        # Header: | ChannelType (1B) | SeqNo (2B) | Timestamp (4B) | Payload |
-        timestamp = int(time.time() * 1000)  # ms since epoch
-        
-        # Pack header
-        header = struct.pack('!BHI', channel_type, seqno, timestamp) # Format exp: ! is network byte order, B is unsigned char (1 byte), H is unsigned short (2 bytes), I is unsigned int (4 bytes)
+        # Construct packet header
+        header = struct.pack('!BHI', channel_type, seqno, timestamp)
         payload = data.encode('utf-8') if isinstance(data, str) else data
         packet_data = header + payload
         
         if is_reliable:
             # Use QUIC stream for reliable delivery
-            stream_id = 0  # Use stream 0 for reliable channel
+            stream_id = 0
             self.connection._quic.send_stream_data(stream_id, packet_data, end_stream=False)
             
-            # Track for potential retransmission (though QUIC handles this alr, we track for monitoring)
+            # Track for retransmission
             self.pending_acks[seqno] = {
                 'packet_data': packet_data,
                 'timestamp': time.time(),
                 'retransmit_count': 0
             }
+            print(f"[SEND] Reliable SeqNo={seqno}, Data='{data[:40]}...'")
         else:
             # Use QUIC datagram for unreliable delivery
             self.connection._quic.send_datagram_frame(packet_data)
+            print(f"[SEND] Unreliable SeqNo={seqno}, Data='{data[:40]}...'")
         
         # Transmit
         self.connection.transmit()
+        self.total_sent += 1
     
     def process_ack(self, seqno):
+        """Process ACK and calculate RTT"""
         if seqno in self.pending_acks:
-            # Calculate RTT
             rtt = time.time() - self.pending_acks[seqno]['timestamp']
+            self.latency_records.append(rtt)
             del self.pending_acks[seqno]
+            self.acked_packets.add(seqno)
+
+            # Slide window base
+            while self.base in self.acked_packets and self.base < self.next_seqno:
+                self.base += 1
+
+            print(f"[ACK] SeqNo={seqno}, RTT={rtt*1000:.2f} ms, New base={self.base}")
             return rtt
         return None
-    
-    ## TODO QUIC already handles retransmissions at the transport layer, but part (e) asks us to implement (pls check if we need to go deeper or just tracking like this is enough)
-    async def check_retransmissions(self): # Check for packets that need retransmission every now and then, (e.g., every 50ms)
+
+    async def check_retransmissions(self):
+        """Check for packets that need retransmission"""
         current_time = time.time()
-        packets_to_retransmit = []
         
-        # get packets that got no ACK
         for seqno, packet_info in list(self.pending_acks.items()):
-            time_elapsed = current_time - packet_info['timestamp']
-            
-            if time_elapsed > self.retransmit_timeout:
-                packets_to_retransmit.append((seqno, packet_info))
-        
-        # TODO Retransmit the packets (altho this handled by QUIC alr... so do we still do this?? we do it here as per requirement)
-        for seqno, packet_info in packets_to_retransmit:
-            stream_id = 0
-            self.connection._quic.send_stream_data(stream_id, packet_info['packet_data'], end_stream=False)
-            self.connection.transmit()
-            
-            # Update retransmission count and timestamp
-            self.pending_acks[seqno]['retransmit_count'] += 1
-            self.pending_acks[seqno]['timestamp'] = current_time
-            
-            print(f"[Retransmit] SeqNo={seqno}, Count={self.pending_acks[seqno]['retransmit_count']}")
+            if seqno in self.acked_packets:
+                continue
+                
+            elapsed = current_time - packet_info['timestamp']
+            if elapsed > self.retransmit_timeout:
+                print(f"[Retransmit] SeqNo={seqno} (elapsed={elapsed*1000:.1f} ms)")
+                self.connection._quic.send_stream_data(0, packet_info['packet_data'], end_stream=False)
+                self.connection.transmit()
+                self.pending_acks[seqno]['timestamp'] = current_time
+                self.pending_acks[seqno]['retransmit_count'] += 1
 
-    # TODO whoever doing sender/receiver side u can use this for logs in requirement (g)
-    # EXAMPLE USAGE 
-    # # Your custom handler function
-    # def handle_received_packet(seqno, channel_type, payload, timestamp):
-    #     print(f"Received: SeqNo={seqno}, Type={channel_type}, Data={payload}, Time={timestamp}")
-    #     # Do whatever you want with the packet data
+    async def start_retransmit_loop(self):
+        """Background task to check retransmissions"""
+        while True:
+            await asyncio.sleep(0.1)
+            await self.check_retransmissions()
 
-    # # Set the callback
-    # receiver_api = GameNetAPI(connection)
-    # receiver_api.set_receive_callback(handle_received_packet)
-
-    # this is an observer pattern, decouples gamenetapi from app logic.
     def set_receive_callback(self, callback):
-        """
-        Set callback for received packets.
-        
-        :param callback: Function(seqno, channel_type, payload, timestamp) to call when packet received
-        """
+        """Set callback for received packets"""
         self.receiver_callback = callback
     
-    def process_received_data(self, data, is_reliable=True): # data is raw bytes received
-
-        # Unpack header: | ChannelType (1B) | SeqNo (2B) | Timestamp (4B) | Payload |
-        if len(data) < 7: # Invalid packet
-            return          
+    def process_received_data(self, data, is_reliable=True):
+        """Process raw received data"""
+        if len(data) < 7:
+            return
 
         channel_type, seqno, timestamp = struct.unpack('!BHI', data[:7])
         payload = data[7:].decode('utf-8', errors='ignore')
         arrival_time = time.time()
         
-        if channel_type == 0:  # Reliable channel
+        # Check if this is an ACK packet (using bit flag)
+        is_ack = bool(channel_type & 0b10)
+        actual_channel = channel_type & 0b01
+        
+        if is_ack:
+            print(f"[DEBUG] Received ACK for SeqNo={seqno}")
+            self.process_ack(seqno)
+            return
+        
+        if actual_channel == 0:  # Reliable channel
+            print(f"[RECV] Reliable SeqNo={seqno}, Data='{payload[:40]}...'")
+            
             # Track arrival time
             self.packet_arrival_times[seqno] = arrival_time
             
             # Buffer and reorder
-            self.reliable_buffer[seqno] = (seqno, channel_type, payload, timestamp)
+            self.reliable_buffer[seqno] = (seqno, actual_channel, payload, timestamp)
             
             # Check for missing packets and skip if timeout exceeded
             self._check_and_skip_missing_packets()
             
-            # Deliver in-order packets 
+            # Deliver in-order packets
             while self.next_expected_reliable_seqno in self.reliable_buffer:
                 pkt = self.reliable_buffer.pop(self.next_expected_reliable_seqno)
                 if self.receiver_callback:
                     self.receiver_callback(*pkt)
+                self.total_received += 1
+
+                # Send ACK for this seqno
+                ack_flag = 0b10  # ACK bit set
+                ack_header = struct.pack('!BHI', ack_flag, pkt[0], int(time.time() * 1000) & 0xFFFFFFFF)
+                self.connection._quic.send_stream_data(0, ack_header, end_stream=False)
+                self.connection.transmit()
+                print(f"[ACK SENT] SeqNo={pkt[0]}")
+
                 self.next_expected_reliable_seqno += 1
 
         else:  # Unreliable channel
-            # Deliver immediately, no ordering
+            print(f"[RECV] Unreliable SeqNo={seqno}, Data='{payload[:40]}...'")
             if self.receiver_callback:
-                self.receiver_callback(seqno, channel_type, payload, timestamp)
-    
-    # Used by receiver side to skip lost packets after timeout
-    def _check_and_skip_missing_packets(self): # Check for missing packets in the reliable buffer. If a packet is missing for more than 200ms, skip it and deliver subsequent packets.
+                print(f"[Inside RECV callback] Unreliable SeqNo={seqno}")
+                self.receiver_callback(seqno, actual_channel, payload, timestamp)
+            print(f"[After RECV callback] Unreliable SeqNo={seqno}")
+            self.total_received += 1
+
+    def _check_and_skip_missing_packets(self):
+        """Check for missing packets and skip if timeout exceeded"""
         current_time = time.time()
-        
-        # Find all packets that have arrived
         arrived_seqnos = set(self.reliable_buffer.keys())
         
-        # Check if we're waiting for any packets 
         if arrived_seqnos:
             max_arrived = max(arrived_seqnos)
             
-            # Check for gaps between next_expected and max_arrived
             for expected_seqno in range(self.next_expected_reliable_seqno, max_arrived + 1):
                 if expected_seqno not in arrived_seqnos:
-
-                    # This packet missing
                     if expected_seqno not in self.missing_packet_timers:
-                        # First time noticing this packet is missing
                         self.missing_packet_timers[expected_seqno] = current_time
                     else:
-                        # Check if timeout exceeded
                         time_missing = current_time - self.missing_packet_timers[expected_seqno]
                         
                         if time_missing > self.retransmit_timeout:
-                            # Skip this packet
                             print(f"[Skip] SeqNo={expected_seqno} - timeout exceeded ({time_missing*1000:.1f}ms)")
-                            
-                            # Remove from timer tracking
                             del self.missing_packet_timers[expected_seqno]
                             
-                            # Move to next expected
                             if expected_seqno == self.next_expected_reliable_seqno:
                                 self.next_expected_reliable_seqno += 1
                 else:
-                    # Packet has arrived, remove from missing timers if present
                     if expected_seqno in self.missing_packet_timers:
                         del self.missing_packet_timers[expected_seqno]
+
+    def compute_metrics(self):
+        """Print performance metrics"""
+        duration = time.time() - self.start_time
+        avg_rtt = (sum(self.latency_records) / len(self.latency_records)) * 1000 if self.latency_records else 0
+        delivery_ratio = (self.total_received / self.total_sent * 100) if self.total_sent else 0
+        throughput = self.total_received / duration if duration > 0 else 0
+        
+        print("\n" + "="*60)
+        print("PERFORMANCE METRICS")
+        print("="*60)
+        print(f"Duration:       {duration:.2f}s")
+        print(f"Packets Sent:   {self.total_sent}")
+        print(f"Packets Recv:   {self.total_received}")
+        print(f"Avg RTT:        {avg_rtt:.2f} ms")
+        print(f"Delivery Ratio: {delivery_ratio:.2f}%")
+        print(f"Throughput:     {throughput:.2f} pkts/sec")
+        print("="*60 + "\n")
