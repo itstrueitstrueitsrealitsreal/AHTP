@@ -4,3 +4,4 @@ certs/
 venv/
 __pycache__/
 .DS_Store
+receiver_log.jsonl
