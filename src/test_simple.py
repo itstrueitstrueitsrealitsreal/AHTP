@@ -2,8 +2,10 @@
 Simple diagnostic test to check packet flow
 """
 import asyncio
+import sys
+sys.path.insert(0, '.')
 import src.Services.Sender as Sender
-import src.Services.Reciever as Receiver
+import src.Services.Receiver as Receiver
 
 
 def handle_received_packet(seqno, channel_type, payload, timestamp):
@@ -37,22 +39,9 @@ async def sender_example():
         await asyncio.sleep(3)
         
         # Check results
-        print("\n" + "="*70)
-        print("DIAGNOSTIC RESULTS")
-        print("="*70)
-        print(f"Packets sent:     {api.total_sent}")
-        print(f"ACKs received:    {len(api.acked_packets)}")
-        print(f"Pending ACKs:     {len(api.pending_acks)}")
-        print(f"Acked packet IDs: {sorted(api.acked_packets)}")
-        print(f"Pending IDs:      {sorted(api.pending_acks.keys())}")
-        
-        if api.latency_records:
-            avg_rtt = sum(api.metrics.latency_records) / len(api.metrics.latency_records) * 1000
-            print(f"Average RTT:      {avg_rtt:.2f} ms")
-        else:
-            print("Average RTT:      No ACKs received!")
-        
-        print("="*70)
+        api.compute_metrics(label="Sender-side")
+        recv_api = Receiver.get_latest_api()
+        recv_api.compute_metrics(label="Receiver-side")
         
         if len(api.acked_packets) == 0:
             print("\n❌ PROBLEM: No ACKs received!")
