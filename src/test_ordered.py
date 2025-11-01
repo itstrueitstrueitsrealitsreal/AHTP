@@ -15,32 +15,6 @@ PROJECT_ROOT = os.getcwd()
 VENV_PYTHON = os.path.join(PROJECT_ROOT, "venv", "bin", "python")
 RECEIVER_SCRIPT = os.path.join("src", "receiver_runner.py")
 
-
-class MessageChecker:
-    """Tracks received messages to verify ordering"""
-    def __init__(self):
-        self.received_messages = []
-        self.test_messages = []  # Track messages per test
-    
-    def handle_received_packet(self, seqno, channel_type, payload, timestamp):
-        """Callback for received packets"""
-        self.received_messages.append({
-            'seqno': seqno,
-            'channel_type': channel_type,
-            'payload': payload,
-            'timestamp': timestamp
-        })
-        channel_name = "RELIABLE" if channel_type == 0 else "UNRELIABLE"
-        print(f"[RECV] {channel_name} | SeqNo={seqno:4d} | Data='{payload}'", flush=True)
-    
-    def get_received_messages(self):
-        """Get all received messages"""
-        return self.received_messages.copy()
-    
-    def clear(self):
-        """Clear received messages"""
-        self.received_messages.clear()
-
 async def send_test_messages(num_messages=10, reliability_type='reliable', delay=0.1, host="127.0.0.1", port=4433):
     """Send test messages"""
     print(f"\n{'='*70}")
@@ -91,18 +65,11 @@ def check_message_ordering(received_messages, is_reliable=True):
     return True, "Messages received in correct order"
 
 
-async def run_test(test_name, num_messages, reliability_type, delay=0.1, checker=None, host="127.0.0.1", port=4433):
+async def run_test(test_name, num_messages, reliability_type, delay=0.1, host="127.0.0.1", port=4433):
     """Run a single test"""
     print(f"\n{'#'*70}")
     print(f"TEST: {test_name}")
     print(f"{'#'*70}")
-    
-    # Clear messages from previous test
-    if checker:
-        num_before = len(checker.get_received_messages())
-    else:
-        checker = MessageChecker()
-        num_before = 0
     
     try:
         # Send messages
@@ -111,8 +78,6 @@ async def run_test(test_name, num_messages, reliability_type, delay=0.1, checker
         # Wait a bit more for any late messages
         await asyncio.sleep(0.5)
         
-        # Get received messages
-        # received = checker.get_received_messages()
         try:
             with open(LOG_FILE, "r") as f:
                 all_lines = [json.loads(line) for line in f]
@@ -202,9 +167,6 @@ async def main():
     
     tests = []
     
-    # Create shared checker
-    checker = MessageChecker()
-    
     # Start receiver subprocess inside receiver namespace
     print(f"\n[Main] Launching receiver in 'receiver' namespace...")
     cmd = []
@@ -240,7 +202,6 @@ async def main():
             num_messages=5,
             reliability_type='reliable',
             delay=0.1,
-            checker=checker,
             host=host,
             port=port
         )
@@ -254,7 +215,6 @@ async def main():
             num_messages=20,
             reliability_type='reliable',
             delay=0.05,
-            checker=checker,
             host=host,
             port=port
         )
@@ -268,7 +228,6 @@ async def main():
             num_messages=15,
             reliability_type='reliable',
             delay=0.01,
-            checker=checker,
             host=host,
             port=port
         )
@@ -282,7 +241,6 @@ async def main():
             num_messages=10,
             reliability_type='unreliable',
             delay=0.1,
-            checker=checker,
             host=host,
             port=port
         )
