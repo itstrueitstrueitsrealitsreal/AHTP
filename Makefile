@@ -28,6 +28,7 @@ setup:
 	sudo ip netns exec $(SENDER_NS) ip link set lo up
 	sudo ip netns exec $(RECEIVER_NS) ip link set lo up
 	sudo ip netns exec $(RECEIVER_NS) tc qdisc add dev $(RECEIVER_IF) root netem delay $(DELAY) loss $(LOSS) rate $(RATE)
+	python scripts/generate_certs.py
 	@echo "Setup complete. $(SENDER_IP) ↔ $(RECEIVER_IP) connected with delay $(DELAY), loss $(LOSS), rate $(RATE)."
 
 # ---------------------------------------------------------------------
@@ -39,6 +40,7 @@ teardown:
 	-sudo ip link delete $(SENDER_IF) type veth 2>/dev/null || true
 	-sudo ip netns del $(SENDER_NS) 2>/dev/null || true
 	-sudo ip netns del $(RECEIVER_NS) 2>/dev/null || true
+	rm -rf certs
 	@echo "Teardown complete."
 
 # ---------------------------------------------------------------------
