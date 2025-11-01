@@ -7,7 +7,13 @@ import sys
 import argparse
 sys.path.insert(0, '.')
 import src.Services.Sender as Sender
-import src.Services.Receiver as Receiver
+import os
+import json
+
+LOG_FILE = os.path.join(os.getcwd(), "receiver_log.jsonl") 
+PROJECT_ROOT = os.getcwd()
+VENV_PYTHON = os.path.join(PROJECT_ROOT, "venv", "bin", "python")
+RECEIVER_SCRIPT = os.path.join("src", "receiver_runner.py")
 
 
 class MessageChecker:
@@ -25,7 +31,7 @@ class MessageChecker:
             'timestamp': timestamp
         })
         channel_name = "RELIABLE" if channel_type == 0 else "UNRELIABLE"
-        print(f"[RECV] {channel_name} | SeqNo={seqno:4d} | Data='{payload}'")
+        print(f"[RECV] {channel_name} | SeqNo={seqno:4d} | Data='{payload}'", flush=True)
     
     def get_received_messages(self):
         """Get all received messages"""
@@ -34,13 +40,6 @@ class MessageChecker:
     def clear(self):
         """Clear received messages"""
         self.received_messages.clear()
-
-
-async def run_receiver(checker, port=4433):
-    """Start the receiver/server"""
-    await Receiver.create_receiver(local_port=port, callback=checker.handle_received_packet)
-    await asyncio.Event().wait()
-
 
 async def send_test_messages(num_messages=10, reliability_type='reliable', delay=0.1, host="127.0.0.1", port=4433):
     """Send test messages"""
@@ -63,8 +62,6 @@ async def send_test_messages(num_messages=10, reliability_type='reliable', delay
         print(f"\nWaiting for all messages to be delivered...")
         await asyncio.sleep(1.0)  # Allow time for delivery
         api.compute_metrics(label="Sender-side")
-        recv_api = Receiver.get_latest_api()
-        recv_api.compute_metrics(label="Receiver-side")
 
 def check_message_ordering(received_messages, is_reliable=True):
     """Verify that messages are received in order"""
@@ -115,12 +112,15 @@ async def run_test(test_name, num_messages, reliability_type, delay=0.1, checker
         await asyncio.sleep(0.5)
         
         # Get received messages
-        received = checker.get_received_messages()
+        # received = checker.get_received_messages()
+        try:
+            with open(LOG_FILE, "r") as f:
+                all_lines = [json.loads(line) for line in f]
+        except FileNotFoundError:
+            all_lines = []
+
+        test_received = [msg for msg in all_lines if msg["channel_type"] == (0 if reliability_type == "reliable" else 1)]
         
-        # Filter to only this test's messages (messages received after test started)
-        test_received = received[num_before:] if num_before < len(received) else received
-        
-        # Check ordering
         is_reliable = (reliability_type == 'reliable')
         is_ordered, message = check_message_ordering(test_received, is_reliable)
         
@@ -150,6 +150,13 @@ async def run_test(test_name, num_messages, reliability_type, delay=0.1, checker
         traceback.print_exc()
         return False
 
+    finally:
+        try:
+            open(LOG_FILE, "w").close()  # truncates file
+            print(f"[Cleanup] Cleared receiver log: {LOG_FILE}")
+        except Exception as e:
+            print(f"[Cleanup] Failed to clear log file: {e}")
+
 
 def parse_args():
     """Parse command line arguments"""
@@ -173,6 +180,8 @@ Examples:
                         help='Host address for sender to connect to (default: 127.0.0.1)')
     parser.add_argument('--port', type=int, default=4433,
                         help='Port number (default: 4433)')
+    parser.add_argument('--netem', type=int, default=0,
+                        help='1=Netem, 0=Non-netem')
     
     return parser.parse_args()
 
@@ -183,6 +192,7 @@ async def main():
     
     host = args.host
     port = args.port
+    netem = args.netem
     
     print("="*70)
     print("CS3103 Assignment 4 - Message Ordering Test Suite")
@@ -195,10 +205,32 @@ async def main():
     # Create shared checker
     checker = MessageChecker()
     
-    # Start receiver once for all tests
-    receiver_task = asyncio.create_task(run_receiver(checker, port))
-    print(f"\n[Main] Starting receiver on port {port}...")
-    await asyncio.sleep(1)
+    # Start receiver subprocess inside receiver namespace
+    print(f"\n[Main] Launching receiver in 'receiver' namespace...")
+    cmd = []
+
+    if netem == 1:
+        # run inside receiver namespace
+        cmd = [
+            "sudo", "ip", "netns", "exec", "receiver",
+            VENV_PYTHON,
+            RECEIVER_SCRIPT,
+        ]
+    else:
+        # run directly (no netns)
+        cmd = [
+            VENV_PYTHON,
+            RECEIVER_SCRIPT,
+        ]
+
+    receiver_process = await asyncio.create_subprocess_exec(
+        *cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.STDOUT,
+    )
+
+    await asyncio.sleep(2)  # give receiver time to start
+
     
     try:
         # Test 1: Small number of reliable messages
@@ -257,14 +289,13 @@ async def main():
         tests.append(("Test 4: Unreliable messages", result4))
         
     finally:
-        # Clean up receiver
         print("\n[Main] Stopping receiver...")
-        receiver_task.cancel()
         try:
-            await receiver_task
-        except asyncio.CancelledError:
+            receiver_process.terminate()
+            await receiver_process.wait()
+        except ProcessLookupError:
             pass
-    
+
     # Print summary
     print(f"\n{'='*70}")
     print("TEST SUITE SUMMARY")
