@@ -1,7 +1,6 @@
 import asyncio
-import random
 import src.Services.Sender as Sender
-import src.Services.Reciever as Reciever
+import src.Services.Receiver as Receiver
 
 
 def handle_received_packet(seqno, channel_type, payload, timestamp):
@@ -12,7 +11,7 @@ def handle_received_packet(seqno, channel_type, payload, timestamp):
 
 async def receiver_example():
     """Start the receiver/server"""
-    await Reciever.create_receiver(local_port=4433, callback=handle_received_packet)
+    await Receiver.create_receiver(local_port=4433, callback=handle_received_packet)
     # Keep running indefinitely
     await asyncio.Event().wait()
 
@@ -42,9 +41,16 @@ async def sender_example():
         # Wait for packets to be processed
         print("\n[Sender] Waiting for final packets to be processed...")
         await asyncio.sleep(2)
-        
-        # Print metrics
-        api.compute_metrics()
+
+        # Sender-side metrics
+        api.compute_metrics(label="Sender-side")
+
+        # Receiver-side metrics
+        recv_api = Receiver.get_latest_api()
+        if recv_api:
+            recv_api.compute_metrics(label="Receiver-side")
+        else:
+            print("[WARN] Receiver API not available; cannot print receiver-side metrics.")
 
 
 async def main():

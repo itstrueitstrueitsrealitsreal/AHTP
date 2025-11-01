@@ -3,6 +3,7 @@ from aioquic.asyncio.protocol import QuicConnectionProtocol
 from aioquic.quic.events import StreamDataReceived, DatagramFrameReceived
 import time
 import struct
+from .NetworkMetrics import NetworkMetrics
 
 class GameNetProtocol(QuicConnectionProtocol):
     """Extended QUIC protocol that handles events"""
@@ -53,14 +54,17 @@ class GameNetAPI:
         self.acked_packets = set()
         
         # Metrics
-        self.total_sent = 0
-        self.total_received = 0
-        self.latency_records = []
-        self.start_time = time.time()
+        self.metrics = NetworkMetrics()
+
+        # Simulated network loss probabilities for testing scenarios
+        self.loss_probability_reliable = 0.0
+        self.loss_probability_unreliable = 0.0
 
     async def send_packet(self, data, is_reliable=True):
         """Send a packet through appropriate channel"""
-        timestamp = int(time.time() * 1000) & 0xFFFFFFFF
+        # Store full timestamp for metrics, truncated for packet header
+        full_timestamp = time.time()
+        timestamp = int(full_timestamp * 1000) & 0xFFFFFFFF
         
         if is_reliable:
             # Check window
@@ -83,33 +87,35 @@ class GameNetAPI:
         header = struct.pack('!BHI', channel_type, seqno, timestamp)
         payload = data.encode('utf-8') if isinstance(data, str) else data
         packet_data = header + payload
-        
+
+        # Record packet sent in metrics
+        payload_size = len(payload)
+        self.metrics.record_packet_sent(payload_size, is_reliable)
+
         if is_reliable:
+            # Track for RTT and possible retransmission
+            self.pending_acks[seqno] = {
+                "timestamp": time.time(),
+                "packet_data": packet_data,
+                "retransmit_count": 0,
+            }
+
             # Use QUIC stream for reliable delivery
             stream_id = 0
             self.connection._quic.send_stream_data(stream_id, packet_data, end_stream=False)
-            
-            # Track for retransmission
-            self.pending_acks[seqno] = {
-                'packet_data': packet_data,
-                'timestamp': time.time(),
-                'retransmit_count': 0
-            }
             print(f"[SEND] Reliable SeqNo={seqno}, Data='{data[:40]}...'")
         else:
             # Use QUIC datagram for unreliable delivery
             self.connection._quic.send_datagram_frame(packet_data)
             print(f"[SEND] Unreliable SeqNo={seqno}, Data='{data[:40]}...'")
-        
         # Transmit
         self.connection.transmit()
-        self.total_sent += 1
     
     def process_ack(self, seqno):
         """Process ACK and calculate RTT"""
         if seqno in self.pending_acks:
             rtt = time.time() - self.pending_acks[seqno]['timestamp']
-            self.latency_records.append(rtt)
+            self.metrics.record_rtt(rtt)
             del self.pending_acks[seqno]
             self.acked_packets.add(seqno)
 
@@ -147,6 +153,23 @@ class GameNetAPI:
         """Set callback for received packets"""
         self.receiver_callback = callback
     
+    def _reconstruct_timestamp(self, truncated_timestamp_ms):
+        """Reconstruct full timestamp from 32-bit truncated value"""
+        current_time_ms = int(time.time() * 1000)
+        
+        # Handle 32-bit overflow by finding the closest full timestamp
+        # that matches the truncated value
+        base = current_time_ms & ~0xFFFFFFFF  # Clear lower 32 bits
+        candidate1 = base | truncated_timestamp_ms
+        candidate2 = (base - (1 << 32)) | truncated_timestamp_ms
+        candidate3 = (base + (1 << 32)) | truncated_timestamp_ms
+        
+        # Choose the candidate closest to current time
+        candidates = [candidate1, candidate2, candidate3]
+        best_candidate = min(candidates, key=lambda x: abs(x - current_time_ms))
+        
+        return best_candidate / 1000.0  # Convert to seconds
+    
     def process_received_data(self, data, is_reliable=True):
         """Process raw received data"""
         if len(data) < 7:
@@ -180,26 +203,41 @@ class GameNetAPI:
             # Deliver in-order packets
             while self.next_expected_reliable_seqno in self.reliable_buffer:
                 pkt = self.reliable_buffer.pop(self.next_expected_reliable_seqno)
+                # pkt: (seqno, actual_channel, payload_str, send_timestamp_ms)
+                seq_delivered = pkt[0]
+                payload_str = pkt[2]
+                send_ts_ms = pkt[3]
+                arrival_ts = self.packet_arrival_times.get(seq_delivered, time.time())
+
+                # Record packet reception with metrics component
+                payload_size = len(payload_str.encode('utf-8'))
+                sender_timestamp = self._reconstruct_timestamp(send_ts_ms)
+                self.metrics.record_packet_received(payload_size, seq_delivered, sender_timestamp, is_reliable=True)
+
                 if self.receiver_callback:
                     self.receiver_callback(*pkt)
-                self.total_received += 1
 
                 # Send ACK for this seqno
                 ack_flag = 0b10  # ACK bit set
-                ack_header = struct.pack('!BHI', ack_flag, pkt[0], int(time.time() * 1000) & 0xFFFFFFFF)
+                ack_header = struct.pack('!BHI', ack_flag, seq_delivered, int(time.time() * 1000) & 0xFFFFFFFF)
                 self.connection._quic.send_stream_data(0, ack_header, end_stream=False)
                 self.connection.transmit()
-                print(f"[ACK SENT] SeqNo={pkt[0]}")
+                print(f"[ACK SENT] SeqNo={seq_delivered}")
 
                 self.next_expected_reliable_seqno += 1
 
         else:  # Unreliable channel
             print(f"[RECV] Unreliable SeqNo={seqno}, Data='{payload[:40]}...'")
+
+            # Record packet reception with metrics component
+            payload_size = len(payload.encode('utf-8'))
+            sender_timestamp = self._reconstruct_timestamp(timestamp)
+            self.metrics.record_packet_received(payload_size, seqno, sender_timestamp, is_reliable=False)
+
             if self.receiver_callback:
                 print(f"[Inside RECV callback] Unreliable SeqNo={seqno}")
                 self.receiver_callback(seqno, actual_channel, payload, timestamp)
             print(f"[After RECV callback] Unreliable SeqNo={seqno}")
-            self.total_received += 1
 
     def _check_and_skip_missing_packets(self):
         """Check for missing packets and skip if timeout exceeded"""
@@ -226,20 +264,6 @@ class GameNetAPI:
                     if expected_seqno in self.missing_packet_timers:
                         del self.missing_packet_timers[expected_seqno]
 
-    def compute_metrics(self):
-        """Print performance metrics"""
-        duration = time.time() - self.start_time
-        avg_rtt = (sum(self.latency_records) / len(self.latency_records)) * 1000 if self.latency_records else 0
-        delivery_ratio = (self.total_received / self.total_sent * 100) if self.total_sent else 0
-        throughput = self.total_received / duration if duration > 0 else 0
-        
-        print("\n" + "="*60)
-        print("PERFORMANCE METRICS")
-        print("="*60)
-        print(f"Duration:       {duration:.2f}s")
-        print(f"Packets Sent:   {self.total_sent}")
-        print(f"Packets Recv:   {self.total_received}")
-        print(f"Avg RTT:        {avg_rtt:.2f} ms")
-        print(f"Delivery Ratio: {delivery_ratio:.2f}%")
-        print(f"Throughput:     {throughput:.2f} pkts/sec")
-        print("="*60 + "\n")
+    def compute_metrics(self, label: str = ""):
+        """Print performance metrics using NetworkMetrics component"""
+        self.metrics.print_metrics(label)
