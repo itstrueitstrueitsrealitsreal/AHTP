@@ -95,7 +95,7 @@ class GameNetAPI:
         if is_reliable:
             # Track for RTT and possible retransmission
             self.pending_acks[seqno] = {
-                "timestamp": time.time(),
+                "timestamp": full_timestamp,
                 "packet_data": packet_data,
                 "retransmit_count": 0,
             }
