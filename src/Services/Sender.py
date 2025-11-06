@@ -20,7 +20,7 @@ async def create_sender(dest_ip="127.0.0.1", dest_port=4433):
     """
     configuration = QuicConfiguration(is_client=True)
     configuration.verify_mode = False  # Disable certificate verification for testing
-    configuration.max_datagram_frame_size = 65535  # or some appropriate size
+    configuration.max_datagram_frame_size = 65536  # or some appropriate size
 
 
     class SenderContext:
