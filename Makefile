@@ -26,6 +26,7 @@ setup:
 	sudo ip netns exec $(SENDER_NS) ip link set $(SENDER_IF) up
 	sudo ip netns exec $(RECEIVER_NS) ip link set $(RECEIVER_IF) up
 	sudo ip netns exec $(SENDER_NS) ip link set lo up
+	sudo ip netns exec $(SENDER_NS) tc qdisc add dev $(SENDER_IF) root netem delay $(DELAY) loss $(LOSS) rate $(RATE)
 	sudo ip netns exec $(RECEIVER_NS) ip link set lo up
 	sudo ip netns exec $(RECEIVER_NS) tc qdisc add dev $(RECEIVER_IF) root netem delay $(DELAY) loss $(LOSS) rate $(RATE)
 	python scripts/generate_certs.py
@@ -53,3 +54,6 @@ status:
 clean: 
 	make teardown
 	rm -f *.jsonl
+
+netem:
+	make clean; make setup; rm *.jsonl*; ./run_netem_test.sh
