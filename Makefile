@@ -65,4 +65,4 @@ netem:
 
 plots:
 	python src/plot_metrics.py
-	zip -r fig.zip *.png
+	zip -r fig.zip figures/*
