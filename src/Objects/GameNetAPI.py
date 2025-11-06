@@ -110,7 +110,7 @@ class GameNetAPI:
                 "last_sent": full_timestamp,
                 "packet_data": packet_data,
                 "retransmit_count": 0,
-                "payload_size": payload_size,
+                "payload_size": payload_len    ,
             }
 
             # Reliable QUIC stream
