@@ -50,4 +50,6 @@ status:
 	sudo ip netns list
 	sudo ip netns exec $(RECEIVER_NS) tc qdisc show dev $(RECEIVER_IF)
 
-clean: teardown
+clean: 
+	make teardown
+	rm -f *.jsonl

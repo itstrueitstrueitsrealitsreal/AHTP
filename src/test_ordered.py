@@ -245,7 +245,7 @@ async def main():
         print("\n>>> Running Test 4: Unreliable messages")
         result4 = await run_test(
             "Unreliable messages",
-            num_messages=10,
+            num_messages=200,
             reliability_type='unreliable',
             delay=0.1,
             host=host,
@@ -256,7 +256,7 @@ async def main():
     finally:
         print("\n[Main] Stopping receiver...")
         try:
-            receiver_process.terminate()
+            receiver_process.kill()
             await receiver_process.wait()
         except ProcessLookupError:
             pass
