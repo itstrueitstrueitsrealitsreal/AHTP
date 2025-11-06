@@ -54,12 +54,13 @@ status:
 clean: 
 	make teardown
 	rm -f *.jsonl
-
-netem:
-	make clean; make setup; rm *.jsonl*; ./run_netem_test.sh
 	sudo rm -f results/*
 	sudo rm -f *.png
 	sudo rm -f figures/*
+
+netem:
+	make clean; make setup; rm *.jsonl*; ./run_netem_test.sh
+
 
 plots:
 	python src/plot_metrics.py
