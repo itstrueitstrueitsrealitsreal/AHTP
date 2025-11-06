@@ -48,7 +48,8 @@ class GameNetAPI:
         self.packet_arrival_times = {}
         self.next_expected_reliable_seqno = 1
 
-        self.retransmit_timeout = 0.2  # 200ms default
+        self.retransmit_timeout = 0.5  # 500ms default (give-up threshold)
+        self.retransmit_interval = 0.1  # retransmit every 100ms until give-up
         self.receiver_callback = None
 
         # Skipping lost packets after timeout
@@ -107,10 +108,13 @@ class GameNetAPI:
 
         if is_reliable:
             # Track for RTT and possible retransmission
+            # Track both first_sent (for give-up) and last_sent (for retransmit interval)
             self.pending_acks[seqno] = {
-                "timestamp": full_timestamp,
+                "first_sent": full_timestamp,
+                "last_sent": full_timestamp,
                 "packet_data": packet_data,
                 "retransmit_count": 0,
+                "payload_size": payload_size,
             }
 
             # Use QUIC stream for reliable delivery
@@ -136,7 +140,8 @@ class GameNetAPI:
         # Mark all packets up to seqno as acked
         for seq in range(self.base, min(seqno + 1, self.next_seqno)):
             if seq in self.pending_acks:
-                rtt = time.time() - self.pending_acks[seq]["timestamp"]
+                # Calculate RTT from first sent time
+                rtt = time.time() - self.pending_acks[seq]["first_sent"]
                 self.metrics.record_rtt(rtt)
                 del self.pending_acks[seq]
             self.acked_packets.add(seq)
@@ -157,24 +162,47 @@ class GameNetAPI:
         return None  # Can't calculate accurate individual RTT with cumulative ACKs
 
     async def check_retransmissions(self):
-        """Check for packets that need retransmission"""
+        """Check for packets that need retransmission or give-up"""
         current_time = time.time()
 
         for seqno in range(self.base, self.next_seqno):
             if seqno in self.pending_acks and seqno not in self.acked_packets:
                 packet_info = self.pending_acks[seqno]
-                elapsed = current_time - packet_info["timestamp"]
+                # Total time since first send
+                elapsed_total = current_time - packet_info["first_sent"]
+                # Time since last retransmission
+                elapsed_since_last = current_time - packet_info["last_sent"]
 
-                if elapsed > self.retransmit_timeout:
-                    # For reliable channel: NEVER give up, just keep retrying
+                # Give up if total elapsed exceeds retransmit_timeout (200ms)
+                if elapsed_total > self.retransmit_timeout:
                     print(
-                        f"[Retransmit] SeqNo={seqno} (elapsed={elapsed*1000:.1f} ms, attempt={packet_info['retransmit_count']+1})"
+                        f"[GIVEUP] SeqNo={seqno} - no ACK after {elapsed_total*1000:.1f} ms (giving up)"
+                    )
+                    # Record loss in metrics
+                    self.metrics.record_packet_lost(
+                        packet_info.get("payload_size", 0), is_reliable=True
+                    )
+
+                    # Remove from pending and mark as acked/lost so window can advance
+                    del self.pending_acks[seqno]
+                    self.acked_packets.add(seqno)
+
+                    # Advance base while possible
+                    while self.base in self.acked_packets:
+                        self.base += 1
+
+                    continue
+
+                # Retransmit if enough time has passed since last send
+                if elapsed_since_last >= self.retransmit_interval:
+                    print(
+                        f"[Retransmit] SeqNo={seqno} (since_last={elapsed_since_last*1000:.1f} ms, attempt={packet_info['retransmit_count']+1})"
                     )
                     self.connection._quic.send_stream_data(
                         0, packet_info["packet_data"], end_stream=False
                     )
                     self.connection.transmit()
-                    packet_info["timestamp"] = current_time
+                    packet_info["last_sent"] = current_time
                     packet_info["retransmit_count"] += 1
 
     async def start_retransmit_loop(self):
