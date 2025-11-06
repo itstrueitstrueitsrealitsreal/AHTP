@@ -59,3 +59,8 @@ netem:
 	make clean; make setup; rm *.jsonl*; ./run_netem_test.sh
 	sudo rm -f results/*
 	sudo rm -f *.png
+	sudo rm -f figures/*
+
+plots:
+	python src/plot_metrics.py
+	zip -r fig.zip figures/*
