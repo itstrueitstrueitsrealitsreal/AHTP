@@ -12,10 +12,10 @@ import json
 
 LOG_FILE = os.path.join(os.getcwd(), "receiver_log.jsonl") 
 PROJECT_ROOT = os.getcwd()
-VENV_PYTHON = os.path.join(PROJECT_ROOT, "venv", "bin", "python")
+VENV_PYTHON = os.path.join(PROJECT_ROOT, "venv", "bin", "python3")
 RECEIVER_SCRIPT = os.path.join("src", "receiver_runner.py")
 
-async def send_test_messages(num_messages=10, reliability_type='reliable', delay=0.1, host="127.0.0.1", port=4433):
+async def send_test_messages(num_messages=100, reliability_type='reliable', delay=0.01, host="127.0.0.1", port=4433):
     """Send test messages"""
     print(f"\n{'='*70}")
     print(f"Sending {num_messages} {reliability_type.upper()} messages")
@@ -199,7 +199,7 @@ async def main():
         print("\n>>> Running Test 1: Small batch of reliable messages")
         result1 = await run_test(
             "Small reliable batch",
-            num_messages=5,
+            num_messages=10,
             reliability_type='reliable',
             delay=0.1,
             host=host,
@@ -212,9 +212,9 @@ async def main():
         print("\n>>> Running Test 2: Larger batch of reliable messages")
         result2 = await run_test(
             "Large reliable batch",
-            num_messages=20,
+            num_messages=50,
             reliability_type='reliable',
-            delay=0.05,
+            delay=0.01,
             host=host,
             port=port
         )
@@ -225,7 +225,7 @@ async def main():
         print("\n>>> Running Test 3: Rapid reliable messages")
         result3 = await run_test(
             "Rapid reliable messages",
-            num_messages=15,
+            num_messages=200,
             reliability_type='reliable',
             delay=0.01,
             host=host,
