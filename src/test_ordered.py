@@ -39,6 +39,9 @@ async def send_test_messages(num_messages=100, reliability_type='reliable', dela
 
 def check_message_ordering(received_messages, is_reliable=True):
     """Verify that messages are received in order"""
+    if is_reliable == False:
+        return True, "Unreliable messages - ordering not guaranteed"
+
     if not received_messages:
         return False, "No messages received"
     
