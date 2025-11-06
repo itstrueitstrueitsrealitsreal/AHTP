@@ -6,7 +6,7 @@ import os
 
 LATEST_API = None
 
-def get_latest_api():
+def get_latest_api() -> GameNetAPI:
     """Return the latest GameNetAPI instance created by the server (if any)."""
     return LATEST_API
 
