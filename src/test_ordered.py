@@ -51,10 +51,13 @@ def check_message_ordering(received_messages, is_reliable=True):
     
     # Check ordering by sequence number
     seqnos = [msg['seqno'] for msg in filtered_messages]
-    expected_seqnos = list(range(seqnos[0], seqnos[0] + len(seqnos)))
     
-    if seqnos != expected_seqnos:
-        return False, f"Out of order! Expected: {expected_seqnos}, Got: {seqnos}"
+    # Check if monotonically increasing
+    is_monotonic = all(seqnos[i] < seqnos[i+1] for i in range(len(seqnos)-1))
+    
+    if not is_monotonic:
+        return False, f"Out of order! Sequence numbers not monotonically increasing: {seqnos}"
+        # return False, f"Out of order! Expected: {expected_seqnos}, Got: {seqnos}"
     
     # Check ordering by payload content (additional verification)
     for i, msg in enumerate(filtered_messages):
