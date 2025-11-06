@@ -72,14 +72,20 @@ async def run_test(test_name, num_messages, reliability_type, delay=0.1, host="1
     print(f"{'#'*70}")
     
     try:
+        filename = f"{LOG_FILE}-{test_name}.jsonl"
+
+        ipc_file = os.path.join(PROJECT_ROOT, "current_log.txt")
+        with open(ipc_file, "w") as f:
+            f.write(filename)
+
         # Send messages
         await send_test_messages(num_messages, reliability_type, delay, host, port)
         
         # Wait a bit more for any late messages
         await asyncio.sleep(0.5)
-        
+
         try:
-            with open(LOG_FILE, "r") as f:
+            with open(filename, "r") as f:
                 all_lines = [json.loads(line) for line in f]
         except FileNotFoundError:
             all_lines = []
@@ -117,8 +123,9 @@ async def run_test(test_name, num_messages, reliability_type, delay=0.1, host="1
 
     finally:
         try:
-            open(LOG_FILE, "w").close()  # truncates file
-            print(f"[Cleanup] Cleared receiver log: {LOG_FILE}")
+            # open(LOG_FILE, "w").close()  # truncates file
+            # print(f"[Cleanup] Cleared receiver log: {LOG_FILE}")
+            pass
         except Exception as e:
             print(f"[Cleanup] Failed to clear log file: {e}")
 
