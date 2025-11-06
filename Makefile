@@ -57,3 +57,5 @@ clean:
 
 netem:
 	make clean; make setup; rm *.jsonl*; ./run_netem_test.sh
+	sudo rm -f results/*
+	sudo rm -f *.png

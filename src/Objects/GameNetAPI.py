@@ -381,7 +381,7 @@ class GameNetAPI:
 
     def compute_metrics(self, label: str = ""):
         """Print performance metrics using NetworkMetrics component"""
-        report = self.metrics.get_metrics_report(label="Receiver-side")
+        report = self.metrics.get_metrics_report(label=label)
         self.metrics.print_metrics(label, loaded_metrics=report)
         os.makedirs("results", exist_ok=True)
         with open(f"results/{label.replace(' ', '_')}.json", "w") as f:

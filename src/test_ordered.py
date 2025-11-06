@@ -17,14 +17,7 @@ PROJECT_ROOT = os.getcwd()
 VENV_PYTHON = os.path.join(PROJECT_ROOT, "venv", "bin", "python3")
 RECEIVER_SCRIPT = os.path.join("src", "receiver_runner.py")
 
-
-async def send_test_messages(
-    num_messages=100,
-    reliability_type="reliable",
-    delay=0.01,
-    host="127.0.0.1",
-    port=4433,
-):
+async def send_test_messages(num_messages=100, reliability_type='reliable', delay=0.01, host="127.0.0.1", port=4433, type="test"):
     """Send test messages"""
     print(f"\n{'='*70}")
     print(f"Sending {num_messages} {reliability_type.upper()} messages")
@@ -44,7 +37,7 @@ async def send_test_messages(
         # Wait for all messages to be processed
         print(f"\nWaiting for all messages to be delivered...")
         await asyncio.sleep(1.0)  # Allow time for delivery
-        api.compute_metrics(label="Sender-side")
+        api.compute_metrics(label=f"metrics-{type}")
 
 
 def check_message_ordering(received_messages, is_reliable=True):
@@ -111,8 +104,8 @@ async def run_test(
             f.write(filename)
 
         # Send messages
-        await send_test_messages(num_messages, reliability_type, delay, host, port)
-
+        await send_test_messages(num_messages, reliability_type, delay, host, port, test_name)
+        
         # Wait a bit more for any late messages
         await asyncio.sleep(0.5)
 
