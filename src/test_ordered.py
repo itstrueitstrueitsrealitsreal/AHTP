@@ -12,7 +12,7 @@ import json
 
 LOG_FILE = os.path.join(os.getcwd(), "receiver_log.jsonl") 
 PROJECT_ROOT = os.getcwd()
-VENV_PYTHON = os.path.join(PROJECT_ROOT, ".venv", "bin", "python3")
+VENV_PYTHON = os.path.join(PROJECT_ROOT, "venv", "bin", "python3")
 RECEIVER_SCRIPT = os.path.join("src", "receiver_runner.py")
 
 async def send_test_messages(num_messages=100, reliability_type='reliable', delay=0.01, host="127.0.0.1", port=4433):
