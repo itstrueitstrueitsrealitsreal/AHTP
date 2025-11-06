@@ -69,45 +69,41 @@ class GameNetAPI:
         self.loss_probability_unreliable = 0.0
 
     async def send_packet(self, data, is_reliable=True):
-        """Send a packet through appropriate channel"""
-        # Store full timestamp for metrics, truncated for packet header
+        """Send a packet through appropriate channel (now with payload length)."""
         full_timestamp = time.time()
         timestamp = int(full_timestamp * 1000) & 0xFFFFFFFF
 
+        # Encode the payload and compute its length
+        payload = data.encode("utf-8") if isinstance(data, str) else data
+        payload_len = len(payload)
+
         if is_reliable:
-            # Wait until window has space (BEFORE assigning seqno)
+            # Wait for window space
             wait_count = 0
             while self.next_seqno >= self.base + self.window_size:
-                if wait_count % 10 == 0:  # Only print every 10th wait to reduce spam
-                    print(
-                        f"[Window full] waiting for ACKs... (base={self.base}, next={self.next_seqno})"
-                    )
+                if wait_count % 10 == 0:
+                    print(f"[Window full] waiting for ACKs... (base={self.base}, next={self.next_seqno})")
                 wait_count += 1
-                await asyncio.sleep(
-                    0.05
-                )  # Longer sleep to allow retransmissions to happen
+                await asyncio.sleep(0.05)
 
-            # Now assign sequence number
             seqno = self.next_seqno
             self.next_seqno += 1
             channel_type = 0
-
         else:
             self.unreliable_seqno += 1
             seqno = self.unreliable_seqno
             channel_type = 1
 
-        # Construct packet header
-        header = struct.pack("!BHI", channel_type, seqno, timestamp)
-        payload = data.encode("utf-8") if isinstance(data, str) else data
+        # --- NEW HEADER FORMAT ---
+        # B: channel_type | H: seqno | I: timestamp | H: payload_len
+        header = struct.pack("!BHIH", channel_type, seqno, timestamp, payload_len)
         packet_data = header + payload
 
-        # Record packet sent in metrics
-        payload_size = len(payload)
-        self.metrics.record_packet_sent(payload_size, is_reliable)
+        # Record metrics
+        self.metrics.record_packet_sent(payload_len, is_reliable)
 
         if is_reliable:
-            # Track for RTT and possible retransmission
+            # Track for retransmission
             # Track both first_sent (for give-up) and last_sent (for retransmit interval)
             self.pending_acks[seqno] = {
                 "first_sent": full_timestamp,
@@ -117,18 +113,19 @@ class GameNetAPI:
                 "payload_size": payload_size,
             }
 
-            # Use QUIC stream for reliable delivery
+            # Reliable QUIC stream
             stream_id = 0
-            self.connection._quic.send_stream_data(
-                stream_id, packet_data, end_stream=False
-            )
-            print(f"[SEND] Reliable SeqNo={seqno}, Data='{data[:40]}...'")
+            self.connection._quic.send_stream_data(stream_id, packet_data, end_stream=False)
+            print(f"[SEND] Reliable SeqNo={seqno}, Len={payload_len}, Data='{data[:40]}...'")
+
         else:
-            # Use QUIC datagram for unreliable delivery
+            # Unreliable QUIC datagram
             self.connection._quic.send_datagram_frame(packet_data)
-            print(f"[SEND] Unreliable SeqNo={seqno}, Data='{data[:40]}...'")
-        # Transmit
+            print(f"[SEND] Unreliable SeqNo={seqno}, Len={payload_len}, Data='{data[:40]}...'")
+
+        # Send out immediately
         self.connection.transmit()
+
 
     def process_ack(self, seqno):
         """Process cumulative ACK - everything up to seqno has been received"""
@@ -236,11 +233,27 @@ class GameNetAPI:
         """Process raw received data"""
         if len(data) < 7:
             return
+        try:
+            channel_type, seqno, timestamp, payload_len = struct.unpack("!BHIH", data[:9])
+        except struct.error:
+            return  # corrupted or incomplete header
+         # Extract only the first packet
+        total_len = 9 + payload_len
+        if len(data) < total_len:
+            # Incomplete packet, ignore
+            return
 
-        channel_type, seqno, timestamp = struct.unpack("!BHI", data[:7])
-        payload = data[7:].decode("utf-8", errors="ignore")
+        # Take ONLY the first packet's bytes
+        packet_data = data[:total_len]
+        payload_bytes = packet_data[9:]
+        payload = payload_bytes.decode("utf-8", errors="ignore")
+        # print("\n=== RAW DATA DIAGNOSTIC ===")
+        # print(f"Total bytes received: {len(data)}")
+        # print("Hex dump (first 80 bytes):", data[:80].hex(" "))
+        # print("Printable preview:", repr(data[:80]))
+        # print("===========================\n")
+
         arrival_time = time.time()
-
         # Check if this is an ACK packet (using bit flag)
         is_ack = bool(channel_type & 0b10)
         actual_channel = channel_type & 0b01
@@ -295,11 +308,13 @@ class GameNetAPI:
 
             if ack_seqno > 0:
                 ack_flag = 0b10  # ACK bit set
+                payload_len =  0  # No payload for ACK
                 ack_header = struct.pack(
-                    "!BHI",
+                    "!BHIH",
                     ack_flag,
                     ack_seqno,  # Send cumulative ACK (highest in-order seqno)
                     int(time.time() * 1000) & 0xFFFFFFFF,
+                    payload_len
                 )
                 self.connection._quic.send_stream_data(0, ack_header, end_stream=False)
                 self.connection.transmit()
