@@ -4,7 +4,8 @@ from aioquic.quic.events import StreamDataReceived, DatagramFrameReceived
 import time
 import struct
 from .NetworkMetrics import NetworkMetrics
-
+import os
+import json
 
 class GameNetProtocol(QuicConnectionProtocol):
     """Extended QUIC protocol that handles events"""
@@ -380,4 +381,9 @@ class GameNetAPI:
 
     def compute_metrics(self, label: str = ""):
         """Print performance metrics using NetworkMetrics component"""
-        self.metrics.print_metrics(label)
+        report = self.metrics.get_metrics_report(label="Receiver-side")
+        self.metrics.print_metrics(label, loaded_metrics=report)
+        os.makedirs("results", exist_ok=True)
+        with open(f"results/{label.replace(' ', '_')}.json", "w") as f:
+            json.dump(report, f, indent=2)
+    

@@ -229,11 +229,10 @@ class NetworkMetrics:
                 "bytes_lost": self.bytes_lost_unreliable,
             },
         }
-
-    def print_metrics(self, label):
+    
+    def print_metrics(self, label, loaded_metrics=None):
         """Print formatted metrics report (maintains current interface)"""
-        metrics = self.get_metrics_report(label)
-
+        metrics = loaded_metrics if loaded_metrics else self.get_metrics_report(label)
         print(f"\n=== PERFORMANCE METRICS [{label}] ===")
 
         if label == "Receiver-side":
