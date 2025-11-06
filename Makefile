@@ -58,10 +58,11 @@ clean:
 	sudo rm -f *.png
 	sudo rm -f figures/*
 
+
 netem:
 	make clean; make setup; rm *.jsonl*; ./run_netem_test.sh
 
 
 plots:
 	python src/plot_metrics.py
-	zip -r fig.zip figures/*
+	zip -r fig.zip *.png
