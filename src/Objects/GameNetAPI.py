@@ -100,7 +100,7 @@ class GameNetAPI:
         header = struct.pack("!BHIH", channel_type, seqno, timestamp, payload_len)
         packet_data = header + payload
 
-        # Record metrics
+        # Record sender-side metrics
         self.metrics.record_packet_sent(payload_len, is_reliable)
 
         if is_reliable:
@@ -138,7 +138,7 @@ class GameNetAPI:
         # Mark all packets up to seqno as acked
         for seq in range(self.base, min(seqno + 1, self.next_seqno)):
             if seq in self.pending_acks:
-                # Calculate RTT from first sent time
+                # Record RTT for sender-side metrics
                 rtt = time.time() - self.pending_acks[seq]["first_sent"]
                 self.metrics.record_rtt(rtt)
                 del self.pending_acks[seq]
@@ -176,10 +176,7 @@ class GameNetAPI:
                     print(
                         f"[GIVEUP] SeqNo={seqno} - no ACK after {elapsed_total*1000:.1f} ms (giving up)"
                     )
-                    # Record loss in metrics
-                    self.metrics.record_packet_lost(
-                        packet_info.get("payload_size", 0), is_reliable=True
-                    )
+                    # Note: Packet loss is tracked on receiver side only
 
                     # Remove from pending and mark as acked/lost so window can advance
                     del self.pending_acks[seqno]
@@ -335,11 +332,17 @@ class GameNetAPI:
                 print(f"[RECV] Unreliable SeqNo={seqno}, Data='{payload[:40]}...'")
                 
                 # Record packet reception
-                payload_size = len(payload.encode("utf-8"))
-                sender_timestamp = self._reconstruct_timestamp(timestamp)
+                try:
+                    payload_size = len(payload.encode("utf-8"))
+                    sender_timestamp = self._reconstruct_timestamp(timestamp)
+                except Exception as e:
+                    print(f"[ERROR] Failed to record packet reception: {e}")
+                    payload_size = 0
+                    sender_timestamp = 0.0
+                
                 self.metrics.record_packet_received(
-                    payload_size, seqno, sender_timestamp, is_reliable=False
-                )
+                        payload_size, seqno, sender_timestamp, is_reliable=False
+                    )
                 
                 if self.receiver_callback:
                     self.receiver_callback(seqno, actual_channel, payload, timestamp)

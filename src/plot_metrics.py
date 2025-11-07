@@ -27,7 +27,7 @@ os.makedirs("figures", exist_ok=True)
 # -------------------------------------------------------------------
 # 1. Load Sender Metrics
 # -------------------------------------------------------------------
-sender_files = sorted(glob.glob(os.path.join(RESULTS_DIR, "metrics-*.json")))
+sender_files = sorted(glob.glob(os.path.join(RESULTS_DIR, "Sender-*.json")))
 sender_rows = []
 
 for f in sender_files:

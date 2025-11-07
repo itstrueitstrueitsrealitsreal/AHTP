@@ -6,6 +6,7 @@ RECEIVER_IF=veth1
 SENDER_IP=10.0.0.1
 RECEIVER_IP=10.0.0.2
 DELAY=50ms
+JITTER=10ms
 LOSS=5%
 RATE=10mbit
 
@@ -26,11 +27,11 @@ setup:
 	sudo ip netns exec $(SENDER_NS) ip link set $(SENDER_IF) up
 	sudo ip netns exec $(RECEIVER_NS) ip link set $(RECEIVER_IF) up
 	sudo ip netns exec $(SENDER_NS) ip link set lo up
-	sudo ip netns exec $(SENDER_NS) tc qdisc add dev $(SENDER_IF) root netem delay $(DELAY) loss $(LOSS) rate $(RATE)
+	sudo ip netns exec $(SENDER_NS) tc qdisc add dev $(SENDER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
 	sudo ip netns exec $(RECEIVER_NS) ip link set lo up
-	sudo ip netns exec $(RECEIVER_NS) tc qdisc add dev $(RECEIVER_IF) root netem delay $(DELAY) loss $(LOSS) rate $(RATE)
+	sudo ip netns exec $(RECEIVER_NS) tc qdisc add dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
 	python scripts/generate_certs.py
-	@echo "Setup complete. $(SENDER_IP) ↔ $(RECEIVER_IP) connected with delay $(DELAY), loss $(LOSS), rate $(RATE)."
+	@echo "Setup complete. $(SENDER_IP) ↔ $(RECEIVER_IP) connected with delay $(DELAY)±$(JITTER), loss $(LOSS), rate $(RATE)."
 
 # ---------------------------------------------------------------------
 # Delete qdiscs, veths, and namespaces

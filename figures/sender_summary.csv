@@ -1,0 +1,5 @@
+label,channel,duration_s,packets_sent,throughput_bps_send,rtt_ms
+Sender-Large reliable batch,Reliable,2.504850387573242,50,196.01969140986992,137.54267692565918
+Sender-Rapid reliable messages,Reliable,6.944437265396118,200,301.2483114253708,129.36698079109192
+Sender-Small reliable batch,Reliable,2.0119218826293945,10,45.230384333347715,102.35767364501953
+Sender-Unreliable messages,Unreliable,21.194645881652832,200,98.70417329364027,0.0

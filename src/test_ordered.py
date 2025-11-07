@@ -16,6 +16,7 @@ LOG_FILE = os.path.join(os.getcwd(), "receiver_log.jsonl")
 PROJECT_ROOT = os.getcwd()
 VENV_PYTHON = os.path.join(PROJECT_ROOT, "venv", "bin", "python3")
 RECEIVER_SCRIPT = os.path.join("src", "receiver_runner.py")
+METRICS_TRIGGER_FILE = os.path.join(PROJECT_ROOT, "trigger_metrics.txt")
 
 async def send_test_messages(num_messages=100, reliability_type='reliable', delay=0.01, host="127.0.0.1", port=4433, type="test"):
     """Send test messages"""
@@ -37,7 +38,10 @@ async def send_test_messages(num_messages=100, reliability_type='reliable', dela
         # Wait for all messages to be processed
         print(f"\nWaiting for all messages to be delivered...")
         await asyncio.sleep(1.0)  # Allow time for delivery
-        api.compute_metrics(label=f"metrics-{type}")
+        
+        # Generate metrics from sender side
+        api.compute_metrics(label=f"Sender-{type}")
+        print(f"[INFO] Sender metrics saved to results/Sender-{type}.json")
 
 
 def check_message_ordering(received_messages, is_reliable=True):
@@ -106,8 +110,12 @@ async def run_test(
         # Send messages
         await send_test_messages(num_messages, reliability_type, delay, host, port, test_name)
         
-        # Wait a bit more for any late messages
-        await asyncio.sleep(0.5)
+        # Trigger receiver to save metrics
+        with open(METRICS_TRIGGER_FILE, "w") as f:
+            f.write(test_name)
+        
+        # Wait a bit more for any late messages and for receiver to save metrics
+        await asyncio.sleep(1.0)
 
         try:
             with open(filename, "r") as f:
@@ -295,9 +303,16 @@ async def main():
     finally:
         print("\n[Main] Stopping receiver...")
         try:
-            receiver_process.kill()
-            await receiver_process.wait()
+            receiver_process.terminate()  # Use SIGTERM instead of SIGKILL to allow graceful shutdown
+            try:
+                await asyncio.wait_for(receiver_process.wait(), timeout=5.0)
+                print("[Main] Receiver stopped gracefully")
+            except asyncio.TimeoutError:
+                print("[Main] Receiver didn't stop, forcing kill...")
+                receiver_process.kill()
+                await receiver_process.wait()
         except ProcessLookupError:
+            print("[Main] Receiver already stopped")
             pass
 
     # Print summary
