@@ -59,7 +59,7 @@ async def test_retransmission():
             actual_channel = channel_type & 0b01
             
             if is_ack:
-                print(f"[DEBUG] Received ACK for SeqNo={seqno}")
+                # print(f"[DEBUG] Received ACK for SeqNo={seqno}")
                 receiver_api.process_ack(seqno)
                 return
             

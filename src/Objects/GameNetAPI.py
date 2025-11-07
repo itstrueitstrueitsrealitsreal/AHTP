@@ -16,18 +16,18 @@ class GameNetProtocol(QuicConnectionProtocol):
 
     def quic_event_received(self, event):
         """Handle QUIC events - THIS IS THE CORRECT METHOD"""
-        print(f"[DEBUG] Event received: {event.__class__.__name__}")
+        # print(f"[DEBUG] Event received: {event.__class__.__name__}")
         if isinstance(event, StreamDataReceived):
-            print(
-                f"[DEBUG] StreamDataReceived event with data length {len(event.data)}"
-            )
+            # print(
+            #     f"[DEBUG] StreamDataReceived event with data length {len(event.data)}"
+            # )
             # Reliable channel data (stream)
             if self.api:
                 self.api.process_received_data(event.data, is_reliable=True)
         elif isinstance(event, DatagramFrameReceived):
-            print(
-                f"[DEBUG] DatagramFrameReceived event with data length {len(event.data)}"
-            )
+            # print(
+            #     f"[DEBUG] DatagramFrameReceived event with data length {len(event.data)}"
+            # )
             # Unreliable channel data (datagram)
             if self.api:
                 self.api.process_received_data(event.data, is_reliable=False)
@@ -131,9 +131,9 @@ class GameNetAPI:
     def process_ack(self, seqno):
         """Process cumulative ACK - everything up to seqno has been received"""
         # Cumulative ACK means receiver has everything from 1 to seqno in order
-        print(
-            f"[DEBUG] Processing cumulative ACK for SeqNo={seqno}, current base={self.base}"
-        )
+        # print(
+        #     f"[DEBUG] Processing cumulative ACK for SeqNo={seqno}, current base={self.base}"
+        # )
 
         # Mark all packets up to seqno as acked
         for seq in range(self.base, min(seqno + 1, self.next_seqno)):
@@ -271,7 +271,7 @@ class GameNetAPI:
             actual_channel = channel_type & 0b01
             
             if is_ack:
-                print(f"[DEBUG] Received ACK for SeqNo={seqno}")
+                # print(f"[DEBUG] Received ACK for SeqNo={seqno}")
                 self.process_ack(seqno)
                 offset += total_packet_len
                 continue
@@ -335,7 +335,7 @@ class GameNetAPI:
                 try:
                     payload_size = len(payload.encode("utf-8"))
                     sender_timestamp = self._reconstruct_timestamp(timestamp)
-                    print(f"[DEBUG] Recording unreliable packet: seqno={seqno}, size={payload_size}", flush=True)
+                    # print(f"[DEBUG] Recording unreliable packet: seqno={seqno}, size={payload_size}", flush=True)
                 except Exception as e:
                     print(f"[ERROR] Failed to record packet reception: {e}")
                     payload_size = 0
@@ -344,14 +344,14 @@ class GameNetAPI:
                 self.metrics.record_packet_received(
                         payload_size, seqno, sender_timestamp, is_reliable=False
                     )
-                print(f"[DEBUG] Metrics after recording: unreliable_recv={self.metrics.total_recv_unreliable}", flush=True)
+                # print(f"[DEBUG] Metrics after recording: unreliable_recv={self.metrics.total_recv_unreliable}", flush=True)
                 
                 if self.receiver_callback:
                     self.receiver_callback(seqno, actual_channel, payload, timestamp)
             
             # Move to next packet in buffer
             offset += total_packet_len
-            print(f"[DEBUG] Processed packet, offset now at {offset}/{len(data)}")
+            # print(f"[DEBUG] Processed packet, offset now at {offset}/{len(data)}")
 
     def _check_and_skip_missing_packets(self):
         """Check for missing packets and skip if timeout exceeded"""

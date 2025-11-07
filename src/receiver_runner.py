@@ -11,6 +11,8 @@ IPC_FILE = os.path.join(os.getcwd(), "current_log.txt")
 DEFAULT_LOG_FILE = os.path.join(os.getcwd(), "receiver_log.jsonl")
 METRICS_TRIGGER_FILE = os.path.join(os.getcwd(), "trigger_metrics.txt")
 LAST_TEST_NAME = None
+sys.stdout = open("MAIN_LOGS_RECEIVER.txt", "w", buffering=1) 
+sys.stderr = sys.stdout
 
 def get_log_filename():
     if os.path.exists(IPC_FILE):
@@ -35,7 +37,7 @@ def handle_packet(seqno, channel_type, payload, timestamp):
     with open(LOG_FILE, "a") as f:
         f.write(json.dumps(record) + "\n")
     channel_name = "RELIABLE" if channel_type == 0 else "UNRELIABLE"
-    # print(f"[RECV] {channel_name} | SeqNo={seqno} | Data='{payload}'", flush=True)
+    print(f"[RECV] {channel_name} | SeqNo={seqno} | Data='{payload}'", flush=True)
 
 async def check_metrics_trigger():
     """Periodically check if metrics should be saved"""
