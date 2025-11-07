@@ -8,9 +8,9 @@ import asyncio
 import time
 import subprocess
 import os
-from src.Objects.GameNetAPI import GameNetAPI
-from src.Services.Sender import Sender
-from src.Services.Receiver import Receiver
+from Objects.GameNetAPI import GameNetAPI
+from Services.Sender import Sender
+from Services.Receiver import Receiver
 
 def setup_netem_impairment(delay="0ms", loss="0%", rate="1000mbit"):
     """Set up tc netem network impairments"""

@@ -6,9 +6,9 @@ This test checks if payloads are properly delivered through QUIC DATAGRAM frames
 
 import asyncio
 import time
-from src.Objects.GameNetAPI import GameNetAPI
-from src.Services.Sender import Sender
-from src.Services.Receiver import Receiver
+from Objects.GameNetAPI import GameNetAPI
+from Services.Sender import Sender
+from Services.Receiver import Receiver
 
 async def test_quic_payload_transmission():
     """Test QUIC payload transmission with unreliable sender"""
