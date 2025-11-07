@@ -42,10 +42,7 @@ async def sender_example():
         print("\n[Sender] Waiting for final packets to be processed...")
         await asyncio.sleep(2)
 
-        # Sender-side metrics
-        api.compute_metrics(label="Sender-side")
-
-        # Receiver-side metrics
+        # Receiver-side metrics (only receiver tracks metrics now)
         recv_api = Receiver.get_latest_api()
         if recv_api:
             recv_api.compute_metrics(label="Receiver-side")

@@ -38,10 +38,16 @@ async def sender_example():
         print("\n--- All packets sent, waiting 3 seconds for final ACKs ---")
         await asyncio.sleep(3)
         
-        # Check results
-        api.compute_metrics(label="Sender-side")
+        # Wait for packets to be processed
+        print("\n[Sender] Waiting for final packets to be processed...")
+        await asyncio.sleep(2)
+
+        # Receiver-side metrics (only receiver tracks metrics now)
         recv_api = Receiver.get_latest_api()
-        recv_api.compute_metrics(label="Receiver-side")
+        if recv_api:
+            recv_api.compute_metrics(label="Receiver-side")
+        else:
+            print("[WARN] Receiver API not available; cannot print receiver-side metrics.")
         
         if len(api.acked_packets) == 0:
             print("\n❌ PROBLEM: No ACKs received!")
@@ -49,8 +55,8 @@ async def sender_example():
             print("1. Receiver not processing packets correctly")
             print("2. ACK packets not formatted correctly") 
             print("3. Sender not detecting ACK packets")
-        elif len(api.acked_packets) < api.metrics.total_sent:
-            print(f"\n⚠️  WARNING: Only {len(api.acked_packets)}/{api.metrics.total_sent} ACKs received")
+        elif recv_api and len(api.acked_packets) < recv_api.metrics.total_recv_reliable:
+            print(f"\n⚠️  WARNING: Only {len(api.acked_packets)}/{recv_api.metrics.total_recv_reliable} ACKs received")
         else:
             print("\n✓ SUCCESS: All packets acknowledged!")
 

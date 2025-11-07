@@ -2,6 +2,7 @@ import asyncio
 import sys
 import json
 import os
+import signal
 sys.path.insert(0, '.')
 import src.Services.Receiver as Receiver
 
@@ -35,8 +36,27 @@ def handle_packet(seqno, channel_type, payload, timestamp):
 
 async def main():
     print(f"[ReceiverRunner] Starting receiver on 0.0.0.0:4433", flush=True)
-    await Receiver.create_receiver(local_port=4433, callback=handle_packet)
-    await asyncio.Event().wait()
+    
+    # Set up signal handler for graceful shutdown
+    shutdown_event = asyncio.Event()
+    
+    def signal_handler():
+        print("\n[ReceiverRunner] Shutdown signal received, computing metrics...", flush=True)
+        shutdown_event.set()
+    
+    loop = asyncio.get_event_loop()
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        loop.add_signal_handler(sig, signal_handler)
+    
+    try:
+        await Receiver.create_receiver(local_port=4433, callback=handle_packet)
+        await shutdown_event.wait()
+    finally:
+        # Compute and print metrics before shutdown
+        recv_api = Receiver.get_latest_api()
+        if recv_api:
+            recv_api.compute_metrics(label="Receiver-side")
+        print("[ReceiverRunner] Shutdown complete", flush=True)
 
 if __name__ == "__main__":
     asyncio.run(main())

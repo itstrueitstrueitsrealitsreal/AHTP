@@ -37,7 +37,7 @@ async def send_test_messages(num_messages=100, reliability_type='reliable', dela
         # Wait for all messages to be processed
         print(f"\nWaiting for all messages to be delivered...")
         await asyncio.sleep(1.0)  # Allow time for delivery
-        api.compute_metrics(label=f"metrics-{type}")
+        # Note: Metrics are now tracked on receiver side only
 
 
 def check_message_ordering(received_messages, is_reliable=True):

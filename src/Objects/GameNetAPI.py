@@ -100,8 +100,7 @@ class GameNetAPI:
         header = struct.pack("!BHIH", channel_type, seqno, timestamp, payload_len)
         packet_data = header + payload
 
-        # Record metrics
-        self.metrics.record_packet_sent(payload_len, is_reliable)
+        # Note: Metrics are recorded on receiver side only
 
         if is_reliable:
             # Track for retransmission
@@ -138,9 +137,7 @@ class GameNetAPI:
         # Mark all packets up to seqno as acked
         for seq in range(self.base, min(seqno + 1, self.next_seqno)):
             if seq in self.pending_acks:
-                # Calculate RTT from first sent time
-                rtt = time.time() - self.pending_acks[seq]["first_sent"]
-                self.metrics.record_rtt(rtt)
+                # No need to record RTT - metrics are receiver-side only
                 del self.pending_acks[seq]
             self.acked_packets.add(seq)
 
@@ -176,10 +173,7 @@ class GameNetAPI:
                     print(
                         f"[GIVEUP] SeqNo={seqno} - no ACK after {elapsed_total*1000:.1f} ms (giving up)"
                     )
-                    # Record loss in metrics
-                    self.metrics.record_packet_lost(
-                        packet_info.get("payload_size", 0), is_reliable=True
-                    )
+                    # Note: Packet loss is tracked on receiver side only
 
                     # Remove from pending and mark as acked/lost so window can advance
                     del self.pending_acks[seqno]
