@@ -86,22 +86,33 @@ async def main():
     for sig in (signal.SIGTERM, signal.SIGINT):
         loop.add_signal_handler(sig, signal_handler)
     
+    server = None
+    metrics_task = None
+    
     try:
-        await Receiver.create_receiver(local_port=4433, callback=handle_packet)
+        server = await Receiver.create_receiver(local_port=4433, callback=handle_packet)
         
         # Start metrics trigger checker in background
         metrics_task = asyncio.create_task(check_metrics_trigger())
         
         await shutdown_event.wait()
         
-        # Cancel metrics task
-        metrics_task.cancel()
-        try:
-            await metrics_task
-        except asyncio.CancelledError:
-            pass
-            
     finally:
+        print("[ReceiverRunner] Shutting down...", flush=True)
+        
+        # Cancel metrics task
+        if metrics_task:
+            metrics_task.cancel()
+            try:
+                await metrics_task
+            except asyncio.CancelledError:
+                pass
+        
+        # Close the server
+        if server:
+            server.close()
+            await server.wait_closed()
+        
         # Compute and print final metrics before shutdown
         recv_api = Receiver.get_latest_api()
         if recv_api:

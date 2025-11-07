@@ -303,9 +303,16 @@ async def main():
     finally:
         print("\n[Main] Stopping receiver...")
         try:
-            receiver_process.kill()
-            await receiver_process.wait()
+            receiver_process.terminate()  # Use SIGTERM instead of SIGKILL to allow graceful shutdown
+            try:
+                await asyncio.wait_for(receiver_process.wait(), timeout=5.0)
+                print("[Main] Receiver stopped gracefully")
+            except asyncio.TimeoutError:
+                print("[Main] Receiver didn't stop, forcing kill...")
+                receiver_process.kill()
+                await receiver_process.wait()
         except ProcessLookupError:
+            print("[Main] Receiver already stopped")
             pass
 
     # Print summary
