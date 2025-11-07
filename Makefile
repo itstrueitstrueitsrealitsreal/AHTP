@@ -74,45 +74,65 @@ test1:
 	JITTER=0ms
 	LOSS=0%
 	RATE=10mbit
-	sudo ip netns exec $(RECEIVER_NS) tc qdisc add dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
-	sudo ip netns exec $(SENDER_NS) tc qdisc add dev $(SENDER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+
+	sudo ip netns exec $(RECEIVER_NS) tc qdisc replace dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+	sudo ip netns exec $(SENDER_NS)   tc qdisc replace dev $(SENDER_IF)   root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+
 # test 2, low loss <2% conditions
 test2:
 	DELAY=0ms
 	JITTER=0ms
 	LOSS=1%
 	RATE=10mbit
-	sudo ip netns exec $(RECEIVER_NS) tc qdisc add dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
-	sudo ip netns exec $(SENDER_NS) tc qdisc add dev $(SENDER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+
+	sudo ip netns exec $(RECEIVER_NS) tc qdisc replace dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+	sudo ip netns exec $(SENDER_NS)   tc qdisc replace dev $(SENDER_IF)   root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+
 # test 3, high loss 10% conditions
 test3:
 	DELAY=0ms
 	JITTER=0ms
 	LOSS=10%
 	RATE=10mbit
-	sudo ip netns exec $(RECEIVER_NS) tc qdisc add dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
-	sudo ip netns exec $(SENDER_NS) tc qdisc add dev $(SENDER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+
+	sudo ip netns exec $(RECEIVER_NS) tc qdisc replace dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+	sudo ip netns exec $(SENDER_NS)   tc qdisc replace dev $(SENDER_IF)   root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+
 # test 4, high delay 100ms conditions
 test4:
 	DELAY=100ms
 	JITTER=0ms
 	LOSS=0%
 	RATE=10mbit
-	sudo ip netns exec $(RECEIVER_NS) tc qdisc add dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
-	sudo ip netns exec $(SENDER_NS) tc qdisc add dev $(SENDER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+
+	sudo ip netns exec $(RECEIVER_NS) tc qdisc replace dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+	sudo ip netns exec $(SENDER_NS)   tc qdisc replace dev $(SENDER_IF)   root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+
 # test 5, high jitter 50ms conditions
 test5:
 	DELAY=50ms
 	JITTER=50ms
 	LOSS=0%
 	RATE=10mbit
-	sudo ip netns exec $(RECEIVER_NS) tc qdisc add dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
-	sudo ip netns exec $(SENDER_NS) tc qdisc add dev $(SENDER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+
+	sudo ip netns exec $(RECEIVER_NS) tc qdisc replace dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+	sudo ip netns exec $(SENDER_NS)   tc qdisc replace dev $(SENDER_IF)   root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+
 # test 6, low rate 1mbit conditions
 test6:
 	DELAY=0ms
 	JITTER=0ms
 	LOSS=0%
 	RATE=1mbit
-	sudo ip netns exec $(RECEIVER_NS) tc qdisc add dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
-	sudo ip netns exec $(SENDER_NS) tc qdisc add dev $(SENDER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)	
+
+	sudo ip netns exec $(RECEIVER_NS) tc qdisc replace dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+	sudo ip netns exec $(SENDER_NS)   tc qdisc replace dev $(SENDER_IF)   root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+# test 7, combined conditions
+test7:
+	DELAY=50ms
+	JITTER=10ms
+	LOSS=5%
+	RATE=1mbit
+
+	sudo ip netns exec $(RECEIVER_NS) tc qdisc replace dev $(RECEIVER_IF) root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
+	sudo ip netns exec $(SENDER_NS)   tc qdisc replace dev $(SENDER_IF)   root netem delay $(DELAY) $(JITTER) loss $(LOSS) rate $(RATE)
