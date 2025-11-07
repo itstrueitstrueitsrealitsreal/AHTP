@@ -335,6 +335,7 @@ class GameNetAPI:
                 try:
                     payload_size = len(payload.encode("utf-8"))
                     sender_timestamp = self._reconstruct_timestamp(timestamp)
+                    print(f"[DEBUG] Recording unreliable packet: seqno={seqno}, size={payload_size}", flush=True)
                 except Exception as e:
                     print(f"[ERROR] Failed to record packet reception: {e}")
                     payload_size = 0
@@ -343,6 +344,7 @@ class GameNetAPI:
                 self.metrics.record_packet_received(
                         payload_size, seqno, sender_timestamp, is_reliable=False
                     )
+                print(f"[DEBUG] Metrics after recording: unreliable_recv={self.metrics.total_recv_unreliable}", flush=True)
                 
                 if self.receiver_callback:
                     self.receiver_callback(seqno, actual_channel, payload, timestamp)
@@ -389,4 +391,4 @@ class GameNetAPI:
         os.makedirs("results", exist_ok=True)
         with open(f"results/{label.replace(' ', '_')}.json", "w") as f:
             json.dump(report, f, indent=2)
-    
+

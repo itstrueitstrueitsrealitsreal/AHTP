@@ -110,12 +110,16 @@ async def run_test(
         # Send messages
         await send_test_messages(num_messages, reliability_type, delay, host, port, test_name)
         
+        # Wait for receiver to process all packets before triggering metrics save
+        # This ensures packets have time to arrive and be recorded
+        await asyncio.sleep(3.0)
+        
         # Trigger receiver to save metrics
         with open(METRICS_TRIGGER_FILE, "w") as f:
             f.write(test_name)
         
-        # Wait a bit more for any late messages and for receiver to save metrics
-        await asyncio.sleep(1.0)
+        # Wait for receiver to save metrics and reset
+        await asyncio.sleep(2.0)
 
         try:
             with open(filename, "r") as f:

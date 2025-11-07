@@ -2,9 +2,11 @@ import asyncio
 from aioquic.asyncio import serve
 from aioquic.quic.configuration import QuicConfiguration
 from src.Objects.GameNetAPI import GameNetProtocol, GameNetAPI
+from src.Objects.NetworkMetrics import NetworkMetrics
 import os
 
 LATEST_API = None
+SHARED_METRICS = NetworkMetrics()  # Single shared metrics instance across all connections
 
 def get_latest_api() -> GameNetAPI:
     """Return the latest GameNetAPI instance created by the server (if any)."""
@@ -35,6 +37,9 @@ async def create_receiver(local_port=4433, callback=None):
         
         # Attach GameNetAPI to it
         protocol.api = GameNetAPI(protocol)
+        
+        # Use shared metrics across all connections
+        protocol.api.metrics = SHARED_METRICS
         
         # Expose latest API for metrics access
         global LATEST_API

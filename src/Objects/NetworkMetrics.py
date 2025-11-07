@@ -38,6 +38,42 @@ class NetworkMetrics:
         self.received_reliable_seqnos = set()
         self.received_unreliable_seqnos = set()
 
+    def reset(self):
+        """Reset all metrics counters for a new test"""
+        # Reset timing
+        self.start_time = time.time()
+
+        # Reset sender-side counters
+        self.total_sent = 0
+        self.total_sent_reliable = 0
+        self.total_sent_unreliable = 0
+        self.bytes_sent_reliable = 0
+        self.bytes_sent_unreliable = 0
+
+        # Reset receiver-side counters
+        self.total_received = 0
+        self.total_recv_reliable = 0
+        self.total_recv_unreliable = 0
+        self.bytes_recv_reliable = 0
+        self.bytes_recv_unreliable = 0
+
+        # Reset latency tracking
+        self.rtt_records.clear()
+        self.one_way_latency_reliable.clear()
+        self.one_way_latency_unreliable.clear()
+
+        # Reset jitter calculation
+        self.jitter_reliable = 0.0
+        self.jitter_unreliable = 0.0
+        self.last_transit_reliable = None
+        self.last_transit_unreliable = None
+
+        # Reset sequence number tracking
+        self.max_seen_reliable_seqno = 0
+        self.max_seen_unreliable_seqno = 0
+        self.received_reliable_seqnos.clear()
+        self.received_unreliable_seqnos.clear()
+
     def record_packet_sent(self, payload_size: int, is_reliable: bool = True):
         """Record a packet being sent (sender-side)"""
         self.total_sent += 1
@@ -65,6 +101,7 @@ class NetworkMetrics:
             self._update_latency_and_jitter(sender_timestamp, True, seqno)
         else:
             self.total_recv_unreliable += 1
+            print(f"[NetworkMetrics] Unreliable packet received, count now: {self.total_recv_unreliable}", flush=True)
             self.bytes_recv_unreliable += payload_size
             self.received_unreliable_seqnos.add(seqno)
             self._update_latency_and_jitter(sender_timestamp, False, seqno)

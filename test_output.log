@@ -1,0 +1,2462 @@
+======================================================================
+CS3103 Assignment 4 - Message Ordering Test Suite
+======================================================================
+Configuration: host=127.0.0.1, port=4433
+======================================================================
+
+[Main] Launching receiver in 'receiver' namespace...
+
+>>> Running Test 1: Small batch of reliable messages
+
+######################################################################
+TEST: Small reliable batch
+######################################################################
+
+======================================================================
+Sending 10 RELIABLE messages
+======================================================================
+
+[Sender] Connecting to 127.0.0.1:4433...
+[DEBUG] Event received: ProtocolNegotiated
+[DEBUG] Event received: HandshakeCompleted
+[Sender] Connected successfully!
+[SEND] Reliable SeqNo=1, Len=9, Data='Message 1...'
+[SEND] Message 1: 'Message 1'
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=1
+[DEBUG] Processing cumulative ACK for SeqNo=1, current base=1
+[ACK] Cumulative ACK for SeqNo=1, New base=2 (advanced from 1)
+[SEND] Reliable SeqNo=2, Len=9, Data='Message 2...'
+[SEND] Message 2: 'Message 2'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=2
+[DEBUG] Processing cumulative ACK for SeqNo=2, current base=2
+[ACK] Cumulative ACK for SeqNo=2, New base=3 (advanced from 2)
+[SEND] Reliable SeqNo=3, Len=9, Data='Message 3...'
+[SEND] Message 3: 'Message 3'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=3
+[DEBUG] Processing cumulative ACK for SeqNo=3, current base=3
+[ACK] Cumulative ACK for SeqNo=3, New base=4 (advanced from 3)
+[SEND] Reliable SeqNo=4, Len=9, Data='Message 4...'
+[SEND] Message 4: 'Message 4'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=4
+[DEBUG] Processing cumulative ACK for SeqNo=4, current base=4
+[ACK] Cumulative ACK for SeqNo=4, New base=5 (advanced from 4)
+[SEND] Reliable SeqNo=5, Len=9, Data='Message 5...'
+[SEND] Message 5: 'Message 5'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=5
+[DEBUG] Processing cumulative ACK for SeqNo=5, current base=5
+[ACK] Cumulative ACK for SeqNo=5, New base=6 (advanced from 5)
+[SEND] Reliable SeqNo=6, Len=9, Data='Message 6...'
+[SEND] Message 6: 'Message 6'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=6
+[DEBUG] Processing cumulative ACK for SeqNo=6, current base=6
+[ACK] Cumulative ACK for SeqNo=6, New base=7 (advanced from 6)
+[SEND] Reliable SeqNo=7, Len=9, Data='Message 7...'
+[SEND] Message 7: 'Message 7'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=7
+[DEBUG] Processing cumulative ACK for SeqNo=7, current base=7
+[ACK] Cumulative ACK for SeqNo=7, New base=8 (advanced from 7)
+[SEND] Reliable SeqNo=8, Len=9, Data='Message 8...'
+[SEND] Message 8: 'Message 8'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=8
+[DEBUG] Processing cumulative ACK for SeqNo=8, current base=8
+[ACK] Cumulative ACK for SeqNo=8, New base=9 (advanced from 8)
+[SEND] Reliable SeqNo=9, Len=9, Data='Message 9...'
+[SEND] Message 9: 'Message 9'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=9
+[DEBUG] Processing cumulative ACK for SeqNo=9, current base=9
+[ACK] Cumulative ACK for SeqNo=9, New base=10 (advanced from 9)
+[SEND] Reliable SeqNo=10, Len=10, Data='Message 10...'
+[SEND] Message 10: 'Message 10'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=10
+[DEBUG] Processing cumulative ACK for SeqNo=10, current base=10
+[ACK] Cumulative ACK for SeqNo=10, New base=11 (advanced from 10)
+
+Waiting for all messages to be delivered...
+
+=== PERFORMANCE METRICS [Sender-Small reliable batch] ===
+Duration:                     2.02s
+Total Packets Sent:           10
+Send Throughput:              45.11 bytes/sec
+
+-- Reliable Channel --
+Packets Sent:                 10
+Send Throughput:              45.11 bytes/sec
+Average RTT:                  1.73 ms
+Packet Delivery Ratio:        N/A (requires receiver data)
+
+-- Unreliable Channel --
+Packets Sent:                 0
+Send Throughput:              0.00 bytes/sec
+Packet Delivery Ratio:        N/A (requires receiver data)
+============================================================
+
+[INFO] Sender metrics saved to results/Sender-Small reliable batch.json
+[DEBUG] Event received: ConnectionTerminated
+[Sender] Connection closed
+======================================================================
+TEST RESULTS: Small reliable batch
+======================================================================
+Messages sent:     10
+Messages received: 212
+
+Ordering check: ✗ FAIL
+Result: Out of order! Sequence numbers not strictly increasing: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+======================================================================
+
+
+>>> Running Test 2: Larger batch of reliable messages
+
+######################################################################
+TEST: Large reliable batch
+######################################################################
+
+======================================================================
+Sending 50 RELIABLE messages
+======================================================================
+
+[Sender] Connecting to 127.0.0.1:4433...
+[DEBUG] Event received: ProtocolNegotiated
+[DEBUG] Event received: HandshakeCompleted
+[Sender] Connected successfully!
+[SEND] Reliable SeqNo=1, Len=9, Data='Message 1...'
+[SEND] Message 1: 'Message 1'
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=1
+[DEBUG] Processing cumulative ACK for SeqNo=1, current base=1
+[ACK] Cumulative ACK for SeqNo=1, New base=2 (advanced from 1)
+[SEND] Reliable SeqNo=2, Len=9, Data='Message 2...'
+[SEND] Message 2: 'Message 2'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=2
+[DEBUG] Processing cumulative ACK for SeqNo=2, current base=2
+[ACK] Cumulative ACK for SeqNo=2, New base=3 (advanced from 2)
+[SEND] Reliable SeqNo=3, Len=9, Data='Message 3...'
+[SEND] Message 3: 'Message 3'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=3
+[DEBUG] Processing cumulative ACK for SeqNo=3, current base=3
+[ACK] Cumulative ACK for SeqNo=3, New base=4 (advanced from 3)
+[SEND] Reliable SeqNo=4, Len=9, Data='Message 4...'
+[SEND] Message 4: 'Message 4'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=4
+[DEBUG] Processing cumulative ACK for SeqNo=4, current base=4
+[ACK] Cumulative ACK for SeqNo=4, New base=5 (advanced from 4)
+[SEND] Reliable SeqNo=5, Len=9, Data='Message 5...'
+[SEND] Message 5: 'Message 5'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=5
+[DEBUG] Processing cumulative ACK for SeqNo=5, current base=5
+[ACK] Cumulative ACK for SeqNo=5, New base=6 (advanced from 5)
+[SEND] Reliable SeqNo=6, Len=9, Data='Message 6...'
+[SEND] Message 6: 'Message 6'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=6
+[DEBUG] Processing cumulative ACK for SeqNo=6, current base=6
+[ACK] Cumulative ACK for SeqNo=6, New base=7 (advanced from 6)
+[SEND] Reliable SeqNo=7, Len=9, Data='Message 7...'
+[SEND] Message 7: 'Message 7'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=7
+[DEBUG] Processing cumulative ACK for SeqNo=7, current base=7
+[ACK] Cumulative ACK for SeqNo=7, New base=8 (advanced from 7)
+[SEND] Reliable SeqNo=8, Len=9, Data='Message 8...'
+[SEND] Message 8: 'Message 8'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=8
+[DEBUG] Processing cumulative ACK for SeqNo=8, current base=8
+[ACK] Cumulative ACK for SeqNo=8, New base=9 (advanced from 8)
+[SEND] Reliable SeqNo=9, Len=9, Data='Message 9...'
+[SEND] Message 9: 'Message 9'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=9
+[DEBUG] Processing cumulative ACK for SeqNo=9, current base=9
+[ACK] Cumulative ACK for SeqNo=9, New base=10 (advanced from 9)
+[SEND] Reliable SeqNo=10, Len=10, Data='Message 10...'
+[SEND] Message 10: 'Message 10'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=10
+[DEBUG] Processing cumulative ACK for SeqNo=10, current base=10
+[ACK] Cumulative ACK for SeqNo=10, New base=11 (advanced from 10)
+[SEND] Reliable SeqNo=11, Len=10, Data='Message 11...'
+[SEND] Message 11: 'Message 11'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=11
+[DEBUG] Processing cumulative ACK for SeqNo=11, current base=11
+[ACK] Cumulative ACK for SeqNo=11, New base=12 (advanced from 11)
+[SEND] Reliable SeqNo=12, Len=10, Data='Message 12...'
+[SEND] Message 12: 'Message 12'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=12
+[DEBUG] Processing cumulative ACK for SeqNo=12, current base=12
+[ACK] Cumulative ACK for SeqNo=12, New base=13 (advanced from 12)
+[SEND] Reliable SeqNo=13, Len=10, Data='Message 13...'
+[SEND] Message 13: 'Message 13'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=13
+[DEBUG] Processing cumulative ACK for SeqNo=13, current base=13
+[ACK] Cumulative ACK for SeqNo=13, New base=14 (advanced from 13)
+[SEND] Reliable SeqNo=14, Len=10, Data='Message 14...'
+[SEND] Message 14: 'Message 14'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=14
+[DEBUG] Processing cumulative ACK for SeqNo=14, current base=14
+[ACK] Cumulative ACK for SeqNo=14, New base=15 (advanced from 14)
+[SEND] Reliable SeqNo=15, Len=10, Data='Message 15...'
+[SEND] Message 15: 'Message 15'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=15
+[DEBUG] Processing cumulative ACK for SeqNo=15, current base=15
+[ACK] Cumulative ACK for SeqNo=15, New base=16 (advanced from 15)
+[SEND] Reliable SeqNo=16, Len=10, Data='Message 16...'
+[SEND] Message 16: 'Message 16'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=16
+[DEBUG] Processing cumulative ACK for SeqNo=16, current base=16
+[ACK] Cumulative ACK for SeqNo=16, New base=17 (advanced from 16)
+[SEND] Reliable SeqNo=17, Len=10, Data='Message 17...'
+[SEND] Message 17: 'Message 17'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=17
+[DEBUG] Processing cumulative ACK for SeqNo=17, current base=17
+[ACK] Cumulative ACK for SeqNo=17, New base=18 (advanced from 17)
+[SEND] Reliable SeqNo=18, Len=10, Data='Message 18...'
+[SEND] Message 18: 'Message 18'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=18
+[DEBUG] Processing cumulative ACK for SeqNo=18, current base=18
+[ACK] Cumulative ACK for SeqNo=18, New base=19 (advanced from 18)
+[SEND] Reliable SeqNo=19, Len=10, Data='Message 19...'
+[SEND] Message 19: 'Message 19'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=19
+[DEBUG] Processing cumulative ACK for SeqNo=19, current base=19
+[ACK] Cumulative ACK for SeqNo=19, New base=20 (advanced from 19)
+[SEND] Reliable SeqNo=20, Len=10, Data='Message 20...'
+[SEND] Message 20: 'Message 20'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=20
+[DEBUG] Processing cumulative ACK for SeqNo=20, current base=20
+[ACK] Cumulative ACK for SeqNo=20, New base=21 (advanced from 20)
+[SEND] Reliable SeqNo=21, Len=10, Data='Message 21...'
+[SEND] Message 21: 'Message 21'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=21
+[DEBUG] Processing cumulative ACK for SeqNo=21, current base=21
+[ACK] Cumulative ACK for SeqNo=21, New base=22 (advanced from 21)
+[SEND] Reliable SeqNo=22, Len=10, Data='Message 22...'
+[SEND] Message 22: 'Message 22'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=22
+[DEBUG] Processing cumulative ACK for SeqNo=22, current base=22
+[ACK] Cumulative ACK for SeqNo=22, New base=23 (advanced from 22)
+[SEND] Reliable SeqNo=23, Len=10, Data='Message 23...'
+[SEND] Message 23: 'Message 23'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=23
+[DEBUG] Processing cumulative ACK for SeqNo=23, current base=23
+[ACK] Cumulative ACK for SeqNo=23, New base=24 (advanced from 23)
+[SEND] Reliable SeqNo=24, Len=10, Data='Message 24...'
+[SEND] Message 24: 'Message 24'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=24
+[DEBUG] Processing cumulative ACK for SeqNo=24, current base=24
+[ACK] Cumulative ACK for SeqNo=24, New base=25 (advanced from 24)
+[SEND] Reliable SeqNo=25, Len=10, Data='Message 25...'
+[SEND] Message 25: 'Message 25'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=25
+[DEBUG] Processing cumulative ACK for SeqNo=25, current base=25
+[ACK] Cumulative ACK for SeqNo=25, New base=26 (advanced from 25)
+[SEND] Reliable SeqNo=26, Len=10, Data='Message 26...'
+[SEND] Message 26: 'Message 26'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=26
+[DEBUG] Processing cumulative ACK for SeqNo=26, current base=26
+[ACK] Cumulative ACK for SeqNo=26, New base=27 (advanced from 26)
+[SEND] Reliable SeqNo=27, Len=10, Data='Message 27...'
+[SEND] Message 27: 'Message 27'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=27
+[DEBUG] Processing cumulative ACK for SeqNo=27, current base=27
+[ACK] Cumulative ACK for SeqNo=27, New base=28 (advanced from 27)
+[SEND] Reliable SeqNo=28, Len=10, Data='Message 28...'
+[SEND] Message 28: 'Message 28'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=28
+[DEBUG] Processing cumulative ACK for SeqNo=28, current base=28
+[ACK] Cumulative ACK for SeqNo=28, New base=29 (advanced from 28)
+[SEND] Reliable SeqNo=29, Len=10, Data='Message 29...'
+[SEND] Message 29: 'Message 29'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=29
+[DEBUG] Processing cumulative ACK for SeqNo=29, current base=29
+[ACK] Cumulative ACK for SeqNo=29, New base=30 (advanced from 29)
+[SEND] Reliable SeqNo=30, Len=10, Data='Message 30...'
+[SEND] Message 30: 'Message 30'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=30
+[DEBUG] Processing cumulative ACK for SeqNo=30, current base=30
+[ACK] Cumulative ACK for SeqNo=30, New base=31 (advanced from 30)
+[SEND] Reliable SeqNo=31, Len=10, Data='Message 31...'
+[SEND] Message 31: 'Message 31'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=31
+[DEBUG] Processing cumulative ACK for SeqNo=31, current base=31
+[ACK] Cumulative ACK for SeqNo=31, New base=32 (advanced from 31)
+[SEND] Reliable SeqNo=32, Len=10, Data='Message 32...'
+[SEND] Message 32: 'Message 32'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=32
+[DEBUG] Processing cumulative ACK for SeqNo=32, current base=32
+[ACK] Cumulative ACK for SeqNo=32, New base=33 (advanced from 32)
+[SEND] Reliable SeqNo=33, Len=10, Data='Message 33...'
+[SEND] Message 33: 'Message 33'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=33
+[DEBUG] Processing cumulative ACK for SeqNo=33, current base=33
+[ACK] Cumulative ACK for SeqNo=33, New base=34 (advanced from 33)
+[SEND] Reliable SeqNo=34, Len=10, Data='Message 34...'
+[SEND] Message 34: 'Message 34'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=34
+[DEBUG] Processing cumulative ACK for SeqNo=34, current base=34
+[ACK] Cumulative ACK for SeqNo=34, New base=35 (advanced from 34)
+[SEND] Reliable SeqNo=35, Len=10, Data='Message 35...'
+[SEND] Message 35: 'Message 35'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=35
+[DEBUG] Processing cumulative ACK for SeqNo=35, current base=35
+[ACK] Cumulative ACK for SeqNo=35, New base=36 (advanced from 35)
+[SEND] Reliable SeqNo=36, Len=10, Data='Message 36...'
+[SEND] Message 36: 'Message 36'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=36
+[DEBUG] Processing cumulative ACK for SeqNo=36, current base=36
+[ACK] Cumulative ACK for SeqNo=36, New base=37 (advanced from 36)
+[SEND] Reliable SeqNo=37, Len=10, Data='Message 37...'
+[SEND] Message 37: 'Message 37'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=37
+[DEBUG] Processing cumulative ACK for SeqNo=37, current base=37
+[ACK] Cumulative ACK for SeqNo=37, New base=38 (advanced from 37)
+[SEND] Reliable SeqNo=38, Len=10, Data='Message 38...'
+[SEND] Message 38: 'Message 38'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=38
+[DEBUG] Processing cumulative ACK for SeqNo=38, current base=38
+[ACK] Cumulative ACK for SeqNo=38, New base=39 (advanced from 38)
+[SEND] Reliable SeqNo=39, Len=10, Data='Message 39...'
+[SEND] Message 39: 'Message 39'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=39
+[DEBUG] Processing cumulative ACK for SeqNo=39, current base=39
+[ACK] Cumulative ACK for SeqNo=39, New base=40 (advanced from 39)
+[SEND] Reliable SeqNo=40, Len=10, Data='Message 40...'
+[SEND] Message 40: 'Message 40'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=40
+[DEBUG] Processing cumulative ACK for SeqNo=40, current base=40
+[ACK] Cumulative ACK for SeqNo=40, New base=41 (advanced from 40)
+[SEND] Reliable SeqNo=41, Len=10, Data='Message 41...'
+[SEND] Message 41: 'Message 41'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=41
+[DEBUG] Processing cumulative ACK for SeqNo=41, current base=41
+[ACK] Cumulative ACK for SeqNo=41, New base=42 (advanced from 41)
+[SEND] Reliable SeqNo=42, Len=10, Data='Message 42...'
+[SEND] Message 42: 'Message 42'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=42
+[DEBUG] Processing cumulative ACK for SeqNo=42, current base=42
+[ACK] Cumulative ACK for SeqNo=42, New base=43 (advanced from 42)
+[SEND] Reliable SeqNo=43, Len=10, Data='Message 43...'
+[SEND] Message 43: 'Message 43'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=43
+[DEBUG] Processing cumulative ACK for SeqNo=43, current base=43
+[ACK] Cumulative ACK for SeqNo=43, New base=44 (advanced from 43)
+[SEND] Reliable SeqNo=44, Len=10, Data='Message 44...'
+[SEND] Message 44: 'Message 44'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=44
+[DEBUG] Processing cumulative ACK for SeqNo=44, current base=44
+[ACK] Cumulative ACK for SeqNo=44, New base=45 (advanced from 44)
+[SEND] Reliable SeqNo=45, Len=10, Data='Message 45...'
+[SEND] Message 45: 'Message 45'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=45
+[DEBUG] Processing cumulative ACK for SeqNo=45, current base=45
+[ACK] Cumulative ACK for SeqNo=45, New base=46 (advanced from 45)
+[SEND] Reliable SeqNo=46, Len=10, Data='Message 46...'
+[SEND] Message 46: 'Message 46'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=46
+[DEBUG] Processing cumulative ACK for SeqNo=46, current base=46
+[ACK] Cumulative ACK for SeqNo=46, New base=47 (advanced from 46)
+[SEND] Reliable SeqNo=47, Len=10, Data='Message 47...'
+[SEND] Message 47: 'Message 47'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=47
+[DEBUG] Processing cumulative ACK for SeqNo=47, current base=47
+[ACK] Cumulative ACK for SeqNo=47, New base=48 (advanced from 47)
+[SEND] Reliable SeqNo=48, Len=10, Data='Message 48...'
+[SEND] Message 48: 'Message 48'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=48
+[DEBUG] Processing cumulative ACK for SeqNo=48, current base=48
+[ACK] Cumulative ACK for SeqNo=48, New base=49 (advanced from 48)
+[SEND] Reliable SeqNo=49, Len=10, Data='Message 49...'
+[SEND] Message 49: 'Message 49'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=49
+[DEBUG] Processing cumulative ACK for SeqNo=49, current base=49
+[ACK] Cumulative ACK for SeqNo=49, New base=50 (advanced from 49)
+[SEND] Reliable SeqNo=50, Len=10, Data='Message 50...'
+[SEND] Message 50: 'Message 50'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=50
+[DEBUG] Processing cumulative ACK for SeqNo=50, current base=50
+[ACK] Cumulative ACK for SeqNo=50, New base=51 (advanced from 50)
+
+Waiting for all messages to be delivered...
+
+=== PERFORMANCE METRICS [Sender-Large reliable batch] ===
+Duration:                     1.56s
+Total Packets Sent:           50
+Send Throughput:              314.61 bytes/sec
+
+-- Reliable Channel --
+Packets Sent:                 50
+Send Throughput:              314.61 bytes/sec
+Average RTT:                  1.03 ms
+Packet Delivery Ratio:        N/A (requires receiver data)
+
+-- Unreliable Channel --
+Packets Sent:                 0
+Send Throughput:              0.00 bytes/sec
+Packet Delivery Ratio:        N/A (requires receiver data)
+============================================================
+
+[INFO] Sender metrics saved to results/Sender-Large reliable batch.json
+[DEBUG] Event received: ConnectionTerminated
+[Sender] Connection closed
+======================================================================
+TEST RESULTS: Large reliable batch
+======================================================================
+Messages sent:     50
+Messages received: 1050
+
+Ordering check: ✗ FAIL
+Result: Out of order! Sequence numbers not strictly increasing: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+======================================================================
+
+
+>>> Running Test 3: Rapid reliable messages
+
+######################################################################
+TEST: Rapid reliable messages
+######################################################################
+
+======================================================================
+Sending 200 RELIABLE messages
+======================================================================
+
+[Sender] Connecting to 127.0.0.1:4433...
+[DEBUG] Event received: ProtocolNegotiated
+[DEBUG] Event received: HandshakeCompleted
+[Sender] Connected successfully!
+[SEND] Reliable SeqNo=1, Len=9, Data='Message 1...'
+[SEND] Message 1: 'Message 1'
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=1
+[DEBUG] Processing cumulative ACK for SeqNo=1, current base=1
+[ACK] Cumulative ACK for SeqNo=1, New base=2 (advanced from 1)
+[SEND] Reliable SeqNo=2, Len=9, Data='Message 2...'
+[SEND] Message 2: 'Message 2'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=2
+[DEBUG] Processing cumulative ACK for SeqNo=2, current base=2
+[ACK] Cumulative ACK for SeqNo=2, New base=3 (advanced from 2)
+[SEND] Reliable SeqNo=3, Len=9, Data='Message 3...'
+[SEND] Message 3: 'Message 3'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=3
+[DEBUG] Processing cumulative ACK for SeqNo=3, current base=3
+[ACK] Cumulative ACK for SeqNo=3, New base=4 (advanced from 3)
+[SEND] Reliable SeqNo=4, Len=9, Data='Message 4...'
+[SEND] Message 4: 'Message 4'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=4
+[DEBUG] Processing cumulative ACK for SeqNo=4, current base=4
+[ACK] Cumulative ACK for SeqNo=4, New base=5 (advanced from 4)
+[SEND] Reliable SeqNo=5, Len=9, Data='Message 5...'
+[SEND] Message 5: 'Message 5'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=5
+[DEBUG] Processing cumulative ACK for SeqNo=5, current base=5
+[ACK] Cumulative ACK for SeqNo=5, New base=6 (advanced from 5)
+[SEND] Reliable SeqNo=6, Len=9, Data='Message 6...'
+[SEND] Message 6: 'Message 6'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=6
+[DEBUG] Processing cumulative ACK for SeqNo=6, current base=6
+[ACK] Cumulative ACK for SeqNo=6, New base=7 (advanced from 6)
+[SEND] Reliable SeqNo=7, Len=9, Data='Message 7...'
+[SEND] Message 7: 'Message 7'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=7
+[DEBUG] Processing cumulative ACK for SeqNo=7, current base=7
+[ACK] Cumulative ACK for SeqNo=7, New base=8 (advanced from 7)
+[SEND] Reliable SeqNo=8, Len=9, Data='Message 8...'
+[SEND] Message 8: 'Message 8'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=8
+[DEBUG] Processing cumulative ACK for SeqNo=8, current base=8
+[ACK] Cumulative ACK for SeqNo=8, New base=9 (advanced from 8)
+[SEND] Reliable SeqNo=9, Len=9, Data='Message 9...'
+[SEND] Message 9: 'Message 9'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=9
+[DEBUG] Processing cumulative ACK for SeqNo=9, current base=9
+[ACK] Cumulative ACK for SeqNo=9, New base=10 (advanced from 9)
+[SEND] Reliable SeqNo=10, Len=10, Data='Message 10...'
+[SEND] Message 10: 'Message 10'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=10
+[DEBUG] Processing cumulative ACK for SeqNo=10, current base=10
+[ACK] Cumulative ACK for SeqNo=10, New base=11 (advanced from 10)
+[SEND] Reliable SeqNo=11, Len=10, Data='Message 11...'
+[SEND] Message 11: 'Message 11'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=11
+[DEBUG] Processing cumulative ACK for SeqNo=11, current base=11
+[ACK] Cumulative ACK for SeqNo=11, New base=12 (advanced from 11)
+[SEND] Reliable SeqNo=12, Len=10, Data='Message 12...'
+[SEND] Message 12: 'Message 12'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=12
+[DEBUG] Processing cumulative ACK for SeqNo=12, current base=12
+[ACK] Cumulative ACK for SeqNo=12, New base=13 (advanced from 12)
+[SEND] Reliable SeqNo=13, Len=10, Data='Message 13...'
+[SEND] Message 13: 'Message 13'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=13
+[DEBUG] Processing cumulative ACK for SeqNo=13, current base=13
+[ACK] Cumulative ACK for SeqNo=13, New base=14 (advanced from 13)
+[SEND] Reliable SeqNo=14, Len=10, Data='Message 14...'
+[SEND] Message 14: 'Message 14'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=14
+[DEBUG] Processing cumulative ACK for SeqNo=14, current base=14
+[ACK] Cumulative ACK for SeqNo=14, New base=15 (advanced from 14)
+[SEND] Reliable SeqNo=15, Len=10, Data='Message 15...'
+[SEND] Message 15: 'Message 15'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=15
+[DEBUG] Processing cumulative ACK for SeqNo=15, current base=15
+[ACK] Cumulative ACK for SeqNo=15, New base=16 (advanced from 15)
+[SEND] Reliable SeqNo=16, Len=10, Data='Message 16...'
+[SEND] Message 16: 'Message 16'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=16
+[DEBUG] Processing cumulative ACK for SeqNo=16, current base=16
+[ACK] Cumulative ACK for SeqNo=16, New base=17 (advanced from 16)
+[SEND] Reliable SeqNo=17, Len=10, Data='Message 17...'
+[SEND] Message 17: 'Message 17'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=17
+[DEBUG] Processing cumulative ACK for SeqNo=17, current base=17
+[ACK] Cumulative ACK for SeqNo=17, New base=18 (advanced from 17)
+[SEND] Reliable SeqNo=18, Len=10, Data='Message 18...'
+[SEND] Message 18: 'Message 18'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=18
+[DEBUG] Processing cumulative ACK for SeqNo=18, current base=18
+[ACK] Cumulative ACK for SeqNo=18, New base=19 (advanced from 18)
+[SEND] Reliable SeqNo=19, Len=10, Data='Message 19...'
+[SEND] Message 19: 'Message 19'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=19
+[DEBUG] Processing cumulative ACK for SeqNo=19, current base=19
+[ACK] Cumulative ACK for SeqNo=19, New base=20 (advanced from 19)
+[SEND] Reliable SeqNo=20, Len=10, Data='Message 20...'
+[SEND] Message 20: 'Message 20'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=20
+[DEBUG] Processing cumulative ACK for SeqNo=20, current base=20
+[ACK] Cumulative ACK for SeqNo=20, New base=21 (advanced from 20)
+[SEND] Reliable SeqNo=21, Len=10, Data='Message 21...'
+[SEND] Message 21: 'Message 21'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=21
+[DEBUG] Processing cumulative ACK for SeqNo=21, current base=21
+[ACK] Cumulative ACK for SeqNo=21, New base=22 (advanced from 21)
+[SEND] Reliable SeqNo=22, Len=10, Data='Message 22...'
+[SEND] Message 22: 'Message 22'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=22
+[DEBUG] Processing cumulative ACK for SeqNo=22, current base=22
+[ACK] Cumulative ACK for SeqNo=22, New base=23 (advanced from 22)
+[SEND] Reliable SeqNo=23, Len=10, Data='Message 23...'
+[SEND] Message 23: 'Message 23'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=23
+[DEBUG] Processing cumulative ACK for SeqNo=23, current base=23
+[ACK] Cumulative ACK for SeqNo=23, New base=24 (advanced from 23)
+[SEND] Reliable SeqNo=24, Len=10, Data='Message 24...'
+[SEND] Message 24: 'Message 24'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=24
+[DEBUG] Processing cumulative ACK for SeqNo=24, current base=24
+[ACK] Cumulative ACK for SeqNo=24, New base=25 (advanced from 24)
+[SEND] Reliable SeqNo=25, Len=10, Data='Message 25...'
+[SEND] Message 25: 'Message 25'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=25
+[DEBUG] Processing cumulative ACK for SeqNo=25, current base=25
+[ACK] Cumulative ACK for SeqNo=25, New base=26 (advanced from 25)
+[SEND] Reliable SeqNo=26, Len=10, Data='Message 26...'
+[SEND] Message 26: 'Message 26'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=26
+[DEBUG] Processing cumulative ACK for SeqNo=26, current base=26
+[ACK] Cumulative ACK for SeqNo=26, New base=27 (advanced from 26)
+[SEND] Reliable SeqNo=27, Len=10, Data='Message 27...'
+[SEND] Message 27: 'Message 27'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=27
+[DEBUG] Processing cumulative ACK for SeqNo=27, current base=27
+[ACK] Cumulative ACK for SeqNo=27, New base=28 (advanced from 27)
+[SEND] Reliable SeqNo=28, Len=10, Data='Message 28...'
+[SEND] Message 28: 'Message 28'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=28
+[DEBUG] Processing cumulative ACK for SeqNo=28, current base=28
+[ACK] Cumulative ACK for SeqNo=28, New base=29 (advanced from 28)
+[SEND] Reliable SeqNo=29, Len=10, Data='Message 29...'
+[SEND] Message 29: 'Message 29'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=29
+[DEBUG] Processing cumulative ACK for SeqNo=29, current base=29
+[ACK] Cumulative ACK for SeqNo=29, New base=30 (advanced from 29)
+[SEND] Reliable SeqNo=30, Len=10, Data='Message 30...'
+[SEND] Message 30: 'Message 30'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=30
+[DEBUG] Processing cumulative ACK for SeqNo=30, current base=30
+[ACK] Cumulative ACK for SeqNo=30, New base=31 (advanced from 30)
+[SEND] Reliable SeqNo=31, Len=10, Data='Message 31...'
+[SEND] Message 31: 'Message 31'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=31
+[DEBUG] Processing cumulative ACK for SeqNo=31, current base=31
+[ACK] Cumulative ACK for SeqNo=31, New base=32 (advanced from 31)
+[SEND] Reliable SeqNo=32, Len=10, Data='Message 32...'
+[SEND] Message 32: 'Message 32'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=32
+[DEBUG] Processing cumulative ACK for SeqNo=32, current base=32
+[ACK] Cumulative ACK for SeqNo=32, New base=33 (advanced from 32)
+[SEND] Reliable SeqNo=33, Len=10, Data='Message 33...'
+[SEND] Message 33: 'Message 33'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=33
+[DEBUG] Processing cumulative ACK for SeqNo=33, current base=33
+[ACK] Cumulative ACK for SeqNo=33, New base=34 (advanced from 33)
+[SEND] Reliable SeqNo=34, Len=10, Data='Message 34...'
+[SEND] Message 34: 'Message 34'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=34
+[DEBUG] Processing cumulative ACK for SeqNo=34, current base=34
+[ACK] Cumulative ACK for SeqNo=34, New base=35 (advanced from 34)
+[SEND] Reliable SeqNo=35, Len=10, Data='Message 35...'
+[SEND] Message 35: 'Message 35'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=35
+[DEBUG] Processing cumulative ACK for SeqNo=35, current base=35
+[ACK] Cumulative ACK for SeqNo=35, New base=36 (advanced from 35)
+[SEND] Reliable SeqNo=36, Len=10, Data='Message 36...'
+[SEND] Message 36: 'Message 36'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=36
+[DEBUG] Processing cumulative ACK for SeqNo=36, current base=36
+[ACK] Cumulative ACK for SeqNo=36, New base=37 (advanced from 36)
+[SEND] Reliable SeqNo=37, Len=10, Data='Message 37...'
+[SEND] Message 37: 'Message 37'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=37
+[DEBUG] Processing cumulative ACK for SeqNo=37, current base=37
+[ACK] Cumulative ACK for SeqNo=37, New base=38 (advanced from 37)
+[SEND] Reliable SeqNo=38, Len=10, Data='Message 38...'
+[SEND] Message 38: 'Message 38'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=38
+[DEBUG] Processing cumulative ACK for SeqNo=38, current base=38
+[ACK] Cumulative ACK for SeqNo=38, New base=39 (advanced from 38)
+[SEND] Reliable SeqNo=39, Len=10, Data='Message 39...'
+[SEND] Message 39: 'Message 39'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=39
+[DEBUG] Processing cumulative ACK for SeqNo=39, current base=39
+[ACK] Cumulative ACK for SeqNo=39, New base=40 (advanced from 39)
+[SEND] Reliable SeqNo=40, Len=10, Data='Message 40...'
+[SEND] Message 40: 'Message 40'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=40
+[DEBUG] Processing cumulative ACK for SeqNo=40, current base=40
+[ACK] Cumulative ACK for SeqNo=40, New base=41 (advanced from 40)
+[SEND] Reliable SeqNo=41, Len=10, Data='Message 41...'
+[SEND] Message 41: 'Message 41'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=41
+[DEBUG] Processing cumulative ACK for SeqNo=41, current base=41
+[ACK] Cumulative ACK for SeqNo=41, New base=42 (advanced from 41)
+[SEND] Reliable SeqNo=42, Len=10, Data='Message 42...'
+[SEND] Message 42: 'Message 42'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=42
+[DEBUG] Processing cumulative ACK for SeqNo=42, current base=42
+[ACK] Cumulative ACK for SeqNo=42, New base=43 (advanced from 42)
+[SEND] Reliable SeqNo=43, Len=10, Data='Message 43...'
+[SEND] Message 43: 'Message 43'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=43
+[DEBUG] Processing cumulative ACK for SeqNo=43, current base=43
+[ACK] Cumulative ACK for SeqNo=43, New base=44 (advanced from 43)
+[SEND] Reliable SeqNo=44, Len=10, Data='Message 44...'
+[SEND] Message 44: 'Message 44'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=44
+[DEBUG] Processing cumulative ACK for SeqNo=44, current base=44
+[ACK] Cumulative ACK for SeqNo=44, New base=45 (advanced from 44)
+[SEND] Reliable SeqNo=45, Len=10, Data='Message 45...'
+[SEND] Message 45: 'Message 45'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=45
+[DEBUG] Processing cumulative ACK for SeqNo=45, current base=45
+[ACK] Cumulative ACK for SeqNo=45, New base=46 (advanced from 45)
+[SEND] Reliable SeqNo=46, Len=10, Data='Message 46...'
+[SEND] Message 46: 'Message 46'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=46
+[DEBUG] Processing cumulative ACK for SeqNo=46, current base=46
+[ACK] Cumulative ACK for SeqNo=46, New base=47 (advanced from 46)
+[SEND] Reliable SeqNo=47, Len=10, Data='Message 47...'
+[SEND] Message 47: 'Message 47'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=47
+[DEBUG] Processing cumulative ACK for SeqNo=47, current base=47
+[ACK] Cumulative ACK for SeqNo=47, New base=48 (advanced from 47)
+[SEND] Reliable SeqNo=48, Len=10, Data='Message 48...'
+[SEND] Message 48: 'Message 48'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=48
+[DEBUG] Processing cumulative ACK for SeqNo=48, current base=48
+[ACK] Cumulative ACK for SeqNo=48, New base=49 (advanced from 48)
+[SEND] Reliable SeqNo=49, Len=10, Data='Message 49...'
+[SEND] Message 49: 'Message 49'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=49
+[DEBUG] Processing cumulative ACK for SeqNo=49, current base=49
+[ACK] Cumulative ACK for SeqNo=49, New base=50 (advanced from 49)
+[SEND] Reliable SeqNo=50, Len=10, Data='Message 50...'
+[SEND] Message 50: 'Message 50'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=50
+[DEBUG] Processing cumulative ACK for SeqNo=50, current base=50
+[ACK] Cumulative ACK for SeqNo=50, New base=51 (advanced from 50)
+[SEND] Reliable SeqNo=51, Len=10, Data='Message 51...'
+[SEND] Message 51: 'Message 51'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=51
+[DEBUG] Processing cumulative ACK for SeqNo=51, current base=51
+[ACK] Cumulative ACK for SeqNo=51, New base=52 (advanced from 51)
+[SEND] Reliable SeqNo=52, Len=10, Data='Message 52...'
+[SEND] Message 52: 'Message 52'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=52
+[DEBUG] Processing cumulative ACK for SeqNo=52, current base=52
+[ACK] Cumulative ACK for SeqNo=52, New base=53 (advanced from 52)
+[SEND] Reliable SeqNo=53, Len=10, Data='Message 53...'
+[SEND] Message 53: 'Message 53'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=53
+[DEBUG] Processing cumulative ACK for SeqNo=53, current base=53
+[ACK] Cumulative ACK for SeqNo=53, New base=54 (advanced from 53)
+[SEND] Reliable SeqNo=54, Len=10, Data='Message 54...'
+[SEND] Message 54: 'Message 54'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=54
+[DEBUG] Processing cumulative ACK for SeqNo=54, current base=54
+[ACK] Cumulative ACK for SeqNo=54, New base=55 (advanced from 54)
+[SEND] Reliable SeqNo=55, Len=10, Data='Message 55...'
+[SEND] Message 55: 'Message 55'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=55
+[DEBUG] Processing cumulative ACK for SeqNo=55, current base=55
+[ACK] Cumulative ACK for SeqNo=55, New base=56 (advanced from 55)
+[SEND] Reliable SeqNo=56, Len=10, Data='Message 56...'
+[SEND] Message 56: 'Message 56'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=56
+[DEBUG] Processing cumulative ACK for SeqNo=56, current base=56
+[ACK] Cumulative ACK for SeqNo=56, New base=57 (advanced from 56)
+[SEND] Reliable SeqNo=57, Len=10, Data='Message 57...'
+[SEND] Message 57: 'Message 57'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=57
+[DEBUG] Processing cumulative ACK for SeqNo=57, current base=57
+[ACK] Cumulative ACK for SeqNo=57, New base=58 (advanced from 57)
+[SEND] Reliable SeqNo=58, Len=10, Data='Message 58...'
+[SEND] Message 58: 'Message 58'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=58
+[DEBUG] Processing cumulative ACK for SeqNo=58, current base=58
+[ACK] Cumulative ACK for SeqNo=58, New base=59 (advanced from 58)
+[SEND] Reliable SeqNo=59, Len=10, Data='Message 59...'
+[SEND] Message 59: 'Message 59'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=59
+[DEBUG] Processing cumulative ACK for SeqNo=59, current base=59
+[ACK] Cumulative ACK for SeqNo=59, New base=60 (advanced from 59)
+[SEND] Reliable SeqNo=60, Len=10, Data='Message 60...'
+[SEND] Message 60: 'Message 60'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=60
+[DEBUG] Processing cumulative ACK for SeqNo=60, current base=60
+[ACK] Cumulative ACK for SeqNo=60, New base=61 (advanced from 60)
+[SEND] Reliable SeqNo=61, Len=10, Data='Message 61...'
+[SEND] Message 61: 'Message 61'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=61
+[DEBUG] Processing cumulative ACK for SeqNo=61, current base=61
+[ACK] Cumulative ACK for SeqNo=61, New base=62 (advanced from 61)
+[SEND] Reliable SeqNo=62, Len=10, Data='Message 62...'
+[SEND] Message 62: 'Message 62'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=62
+[DEBUG] Processing cumulative ACK for SeqNo=62, current base=62
+[ACK] Cumulative ACK for SeqNo=62, New base=63 (advanced from 62)
+[SEND] Reliable SeqNo=63, Len=10, Data='Message 63...'
+[SEND] Message 63: 'Message 63'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=63
+[DEBUG] Processing cumulative ACK for SeqNo=63, current base=63
+[ACK] Cumulative ACK for SeqNo=63, New base=64 (advanced from 63)
+[SEND] Reliable SeqNo=64, Len=10, Data='Message 64...'
+[SEND] Message 64: 'Message 64'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=64
+[DEBUG] Processing cumulative ACK for SeqNo=64, current base=64
+[ACK] Cumulative ACK for SeqNo=64, New base=65 (advanced from 64)
+[SEND] Reliable SeqNo=65, Len=10, Data='Message 65...'
+[SEND] Message 65: 'Message 65'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=65
+[DEBUG] Processing cumulative ACK for SeqNo=65, current base=65
+[ACK] Cumulative ACK for SeqNo=65, New base=66 (advanced from 65)
+[SEND] Reliable SeqNo=66, Len=10, Data='Message 66...'
+[SEND] Message 66: 'Message 66'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=66
+[DEBUG] Processing cumulative ACK for SeqNo=66, current base=66
+[ACK] Cumulative ACK for SeqNo=66, New base=67 (advanced from 66)
+[SEND] Reliable SeqNo=67, Len=10, Data='Message 67...'
+[SEND] Message 67: 'Message 67'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=67
+[DEBUG] Processing cumulative ACK for SeqNo=67, current base=67
+[ACK] Cumulative ACK for SeqNo=67, New base=68 (advanced from 67)
+[SEND] Reliable SeqNo=68, Len=10, Data='Message 68...'
+[SEND] Message 68: 'Message 68'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=68
+[DEBUG] Processing cumulative ACK for SeqNo=68, current base=68
+[ACK] Cumulative ACK for SeqNo=68, New base=69 (advanced from 68)
+[SEND] Reliable SeqNo=69, Len=10, Data='Message 69...'
+[SEND] Message 69: 'Message 69'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=69
+[DEBUG] Processing cumulative ACK for SeqNo=69, current base=69
+[ACK] Cumulative ACK for SeqNo=69, New base=70 (advanced from 69)
+[SEND] Reliable SeqNo=70, Len=10, Data='Message 70...'
+[SEND] Message 70: 'Message 70'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=70
+[DEBUG] Processing cumulative ACK for SeqNo=70, current base=70
+[ACK] Cumulative ACK for SeqNo=70, New base=71 (advanced from 70)
+[SEND] Reliable SeqNo=71, Len=10, Data='Message 71...'
+[SEND] Message 71: 'Message 71'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=71
+[DEBUG] Processing cumulative ACK for SeqNo=71, current base=71
+[ACK] Cumulative ACK for SeqNo=71, New base=72 (advanced from 71)
+[SEND] Reliable SeqNo=72, Len=10, Data='Message 72...'
+[SEND] Message 72: 'Message 72'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=72
+[DEBUG] Processing cumulative ACK for SeqNo=72, current base=72
+[ACK] Cumulative ACK for SeqNo=72, New base=73 (advanced from 72)
+[SEND] Reliable SeqNo=73, Len=10, Data='Message 73...'
+[SEND] Message 73: 'Message 73'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=73
+[DEBUG] Processing cumulative ACK for SeqNo=73, current base=73
+[ACK] Cumulative ACK for SeqNo=73, New base=74 (advanced from 73)
+[SEND] Reliable SeqNo=74, Len=10, Data='Message 74...'
+[SEND] Message 74: 'Message 74'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=74
+[DEBUG] Processing cumulative ACK for SeqNo=74, current base=74
+[ACK] Cumulative ACK for SeqNo=74, New base=75 (advanced from 74)
+[SEND] Reliable SeqNo=75, Len=10, Data='Message 75...'
+[SEND] Message 75: 'Message 75'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=75
+[DEBUG] Processing cumulative ACK for SeqNo=75, current base=75
+[ACK] Cumulative ACK for SeqNo=75, New base=76 (advanced from 75)
+[SEND] Reliable SeqNo=76, Len=10, Data='Message 76...'
+[SEND] Message 76: 'Message 76'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=76
+[DEBUG] Processing cumulative ACK for SeqNo=76, current base=76
+[ACK] Cumulative ACK for SeqNo=76, New base=77 (advanced from 76)
+[SEND] Reliable SeqNo=77, Len=10, Data='Message 77...'
+[SEND] Message 77: 'Message 77'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=77
+[DEBUG] Processing cumulative ACK for SeqNo=77, current base=77
+[ACK] Cumulative ACK for SeqNo=77, New base=78 (advanced from 77)
+[SEND] Reliable SeqNo=78, Len=10, Data='Message 78...'
+[SEND] Message 78: 'Message 78'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=78
+[DEBUG] Processing cumulative ACK for SeqNo=78, current base=78
+[ACK] Cumulative ACK for SeqNo=78, New base=79 (advanced from 78)
+[SEND] Reliable SeqNo=79, Len=10, Data='Message 79...'
+[SEND] Message 79: 'Message 79'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=79
+[DEBUG] Processing cumulative ACK for SeqNo=79, current base=79
+[ACK] Cumulative ACK for SeqNo=79, New base=80 (advanced from 79)
+[SEND] Reliable SeqNo=80, Len=10, Data='Message 80...'
+[SEND] Message 80: 'Message 80'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=80
+[DEBUG] Processing cumulative ACK for SeqNo=80, current base=80
+[ACK] Cumulative ACK for SeqNo=80, New base=81 (advanced from 80)
+[SEND] Reliable SeqNo=81, Len=10, Data='Message 81...'
+[SEND] Message 81: 'Message 81'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=81
+[DEBUG] Processing cumulative ACK for SeqNo=81, current base=81
+[ACK] Cumulative ACK for SeqNo=81, New base=82 (advanced from 81)
+[SEND] Reliable SeqNo=82, Len=10, Data='Message 82...'
+[SEND] Message 82: 'Message 82'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=82
+[DEBUG] Processing cumulative ACK for SeqNo=82, current base=82
+[ACK] Cumulative ACK for SeqNo=82, New base=83 (advanced from 82)
+[SEND] Reliable SeqNo=83, Len=10, Data='Message 83...'
+[SEND] Message 83: 'Message 83'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=83
+[DEBUG] Processing cumulative ACK for SeqNo=83, current base=83
+[ACK] Cumulative ACK for SeqNo=83, New base=84 (advanced from 83)
+[SEND] Reliable SeqNo=84, Len=10, Data='Message 84...'
+[SEND] Message 84: 'Message 84'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=84
+[DEBUG] Processing cumulative ACK for SeqNo=84, current base=84
+[ACK] Cumulative ACK for SeqNo=84, New base=85 (advanced from 84)
+[SEND] Reliable SeqNo=85, Len=10, Data='Message 85...'
+[SEND] Message 85: 'Message 85'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=85
+[DEBUG] Processing cumulative ACK for SeqNo=85, current base=85
+[ACK] Cumulative ACK for SeqNo=85, New base=86 (advanced from 85)
+[SEND] Reliable SeqNo=86, Len=10, Data='Message 86...'
+[SEND] Message 86: 'Message 86'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=86
+[DEBUG] Processing cumulative ACK for SeqNo=86, current base=86
+[ACK] Cumulative ACK for SeqNo=86, New base=87 (advanced from 86)
+[SEND] Reliable SeqNo=87, Len=10, Data='Message 87...'
+[SEND] Message 87: 'Message 87'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=87
+[DEBUG] Processing cumulative ACK for SeqNo=87, current base=87
+[ACK] Cumulative ACK for SeqNo=87, New base=88 (advanced from 87)
+[SEND] Reliable SeqNo=88, Len=10, Data='Message 88...'
+[SEND] Message 88: 'Message 88'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=88
+[DEBUG] Processing cumulative ACK for SeqNo=88, current base=88
+[ACK] Cumulative ACK for SeqNo=88, New base=89 (advanced from 88)
+[SEND] Reliable SeqNo=89, Len=10, Data='Message 89...'
+[SEND] Message 89: 'Message 89'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=89
+[DEBUG] Processing cumulative ACK for SeqNo=89, current base=89
+[ACK] Cumulative ACK for SeqNo=89, New base=90 (advanced from 89)
+[SEND] Reliable SeqNo=90, Len=10, Data='Message 90...'
+[SEND] Message 90: 'Message 90'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=90
+[DEBUG] Processing cumulative ACK for SeqNo=90, current base=90
+[ACK] Cumulative ACK for SeqNo=90, New base=91 (advanced from 90)
+[SEND] Reliable SeqNo=91, Len=10, Data='Message 91...'
+[SEND] Message 91: 'Message 91'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=91
+[DEBUG] Processing cumulative ACK for SeqNo=91, current base=91
+[ACK] Cumulative ACK for SeqNo=91, New base=92 (advanced from 91)
+[SEND] Reliable SeqNo=92, Len=10, Data='Message 92...'
+[SEND] Message 92: 'Message 92'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=92
+[DEBUG] Processing cumulative ACK for SeqNo=92, current base=92
+[ACK] Cumulative ACK for SeqNo=92, New base=93 (advanced from 92)
+[SEND] Reliable SeqNo=93, Len=10, Data='Message 93...'
+[SEND] Message 93: 'Message 93'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=93
+[DEBUG] Processing cumulative ACK for SeqNo=93, current base=93
+[ACK] Cumulative ACK for SeqNo=93, New base=94 (advanced from 93)
+[SEND] Reliable SeqNo=94, Len=10, Data='Message 94...'
+[SEND] Message 94: 'Message 94'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=94
+[DEBUG] Processing cumulative ACK for SeqNo=94, current base=94
+[ACK] Cumulative ACK for SeqNo=94, New base=95 (advanced from 94)
+[SEND] Reliable SeqNo=95, Len=10, Data='Message 95...'
+[SEND] Message 95: 'Message 95'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=95
+[DEBUG] Processing cumulative ACK for SeqNo=95, current base=95
+[ACK] Cumulative ACK for SeqNo=95, New base=96 (advanced from 95)
+[SEND] Reliable SeqNo=96, Len=10, Data='Message 96...'
+[SEND] Message 96: 'Message 96'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=96
+[DEBUG] Processing cumulative ACK for SeqNo=96, current base=96
+[ACK] Cumulative ACK for SeqNo=96, New base=97 (advanced from 96)
+[SEND] Reliable SeqNo=97, Len=10, Data='Message 97...'
+[SEND] Message 97: 'Message 97'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=97
+[DEBUG] Processing cumulative ACK for SeqNo=97, current base=97
+[ACK] Cumulative ACK for SeqNo=97, New base=98 (advanced from 97)
+[SEND] Reliable SeqNo=98, Len=10, Data='Message 98...'
+[SEND] Message 98: 'Message 98'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=98
+[DEBUG] Processing cumulative ACK for SeqNo=98, current base=98
+[ACK] Cumulative ACK for SeqNo=98, New base=99 (advanced from 98)
+[SEND] Reliable SeqNo=99, Len=10, Data='Message 99...'
+[SEND] Message 99: 'Message 99'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=99
+[DEBUG] Processing cumulative ACK for SeqNo=99, current base=99
+[ACK] Cumulative ACK for SeqNo=99, New base=100 (advanced from 99)
+[SEND] Reliable SeqNo=100, Len=11, Data='Message 100...'
+[SEND] Message 100: 'Message 100'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=100
+[DEBUG] Processing cumulative ACK for SeqNo=100, current base=100
+[ACK] Cumulative ACK for SeqNo=100, New base=101 (advanced from 100)
+[SEND] Reliable SeqNo=101, Len=11, Data='Message 101...'
+[SEND] Message 101: 'Message 101'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=101
+[DEBUG] Processing cumulative ACK for SeqNo=101, current base=101
+[ACK] Cumulative ACK for SeqNo=101, New base=102 (advanced from 101)
+[SEND] Reliable SeqNo=102, Len=11, Data='Message 102...'
+[SEND] Message 102: 'Message 102'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=102
+[DEBUG] Processing cumulative ACK for SeqNo=102, current base=102
+[ACK] Cumulative ACK for SeqNo=102, New base=103 (advanced from 102)
+[SEND] Reliable SeqNo=103, Len=11, Data='Message 103...'
+[SEND] Message 103: 'Message 103'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=103
+[DEBUG] Processing cumulative ACK for SeqNo=103, current base=103
+[ACK] Cumulative ACK for SeqNo=103, New base=104 (advanced from 103)
+[SEND] Reliable SeqNo=104, Len=11, Data='Message 104...'
+[SEND] Message 104: 'Message 104'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=104
+[DEBUG] Processing cumulative ACK for SeqNo=104, current base=104
+[ACK] Cumulative ACK for SeqNo=104, New base=105 (advanced from 104)
+[SEND] Reliable SeqNo=105, Len=11, Data='Message 105...'
+[SEND] Message 105: 'Message 105'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=105
+[DEBUG] Processing cumulative ACK for SeqNo=105, current base=105
+[ACK] Cumulative ACK for SeqNo=105, New base=106 (advanced from 105)
+[SEND] Reliable SeqNo=106, Len=11, Data='Message 106...'
+[SEND] Message 106: 'Message 106'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=106
+[DEBUG] Processing cumulative ACK for SeqNo=106, current base=106
+[ACK] Cumulative ACK for SeqNo=106, New base=107 (advanced from 106)
+[SEND] Reliable SeqNo=107, Len=11, Data='Message 107...'
+[SEND] Message 107: 'Message 107'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=107
+[DEBUG] Processing cumulative ACK for SeqNo=107, current base=107
+[ACK] Cumulative ACK for SeqNo=107, New base=108 (advanced from 107)
+[SEND] Reliable SeqNo=108, Len=11, Data='Message 108...'
+[SEND] Message 108: 'Message 108'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=108
+[DEBUG] Processing cumulative ACK for SeqNo=108, current base=108
+[ACK] Cumulative ACK for SeqNo=108, New base=109 (advanced from 108)
+[SEND] Reliable SeqNo=109, Len=11, Data='Message 109...'
+[SEND] Message 109: 'Message 109'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=109
+[DEBUG] Processing cumulative ACK for SeqNo=109, current base=109
+[ACK] Cumulative ACK for SeqNo=109, New base=110 (advanced from 109)
+[SEND] Reliable SeqNo=110, Len=11, Data='Message 110...'
+[SEND] Message 110: 'Message 110'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=110
+[DEBUG] Processing cumulative ACK for SeqNo=110, current base=110
+[ACK] Cumulative ACK for SeqNo=110, New base=111 (advanced from 110)
+[SEND] Reliable SeqNo=111, Len=11, Data='Message 111...'
+[SEND] Message 111: 'Message 111'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=111
+[DEBUG] Processing cumulative ACK for SeqNo=111, current base=111
+[ACK] Cumulative ACK for SeqNo=111, New base=112 (advanced from 111)
+[SEND] Reliable SeqNo=112, Len=11, Data='Message 112...'
+[SEND] Message 112: 'Message 112'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=112
+[DEBUG] Processing cumulative ACK for SeqNo=112, current base=112
+[ACK] Cumulative ACK for SeqNo=112, New base=113 (advanced from 112)
+[SEND] Reliable SeqNo=113, Len=11, Data='Message 113...'
+[SEND] Message 113: 'Message 113'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=113
+[DEBUG] Processing cumulative ACK for SeqNo=113, current base=113
+[ACK] Cumulative ACK for SeqNo=113, New base=114 (advanced from 113)
+[SEND] Reliable SeqNo=114, Len=11, Data='Message 114...'
+[SEND] Message 114: 'Message 114'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=114
+[DEBUG] Processing cumulative ACK for SeqNo=114, current base=114
+[ACK] Cumulative ACK for SeqNo=114, New base=115 (advanced from 114)
+[SEND] Reliable SeqNo=115, Len=11, Data='Message 115...'
+[SEND] Message 115: 'Message 115'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=115
+[DEBUG] Processing cumulative ACK for SeqNo=115, current base=115
+[ACK] Cumulative ACK for SeqNo=115, New base=116 (advanced from 115)
+[SEND] Reliable SeqNo=116, Len=11, Data='Message 116...'
+[SEND] Message 116: 'Message 116'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=116
+[DEBUG] Processing cumulative ACK for SeqNo=116, current base=116
+[ACK] Cumulative ACK for SeqNo=116, New base=117 (advanced from 116)
+[SEND] Reliable SeqNo=117, Len=11, Data='Message 117...'
+[SEND] Message 117: 'Message 117'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=117
+[DEBUG] Processing cumulative ACK for SeqNo=117, current base=117
+[ACK] Cumulative ACK for SeqNo=117, New base=118 (advanced from 117)
+[SEND] Reliable SeqNo=118, Len=11, Data='Message 118...'
+[SEND] Message 118: 'Message 118'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=118
+[DEBUG] Processing cumulative ACK for SeqNo=118, current base=118
+[ACK] Cumulative ACK for SeqNo=118, New base=119 (advanced from 118)
+[SEND] Reliable SeqNo=119, Len=11, Data='Message 119...'
+[SEND] Message 119: 'Message 119'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=119
+[DEBUG] Processing cumulative ACK for SeqNo=119, current base=119
+[ACK] Cumulative ACK for SeqNo=119, New base=120 (advanced from 119)
+[SEND] Reliable SeqNo=120, Len=11, Data='Message 120...'
+[SEND] Message 120: 'Message 120'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=120
+[DEBUG] Processing cumulative ACK for SeqNo=120, current base=120
+[ACK] Cumulative ACK for SeqNo=120, New base=121 (advanced from 120)
+[SEND] Reliable SeqNo=121, Len=11, Data='Message 121...'
+[SEND] Message 121: 'Message 121'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=121
+[DEBUG] Processing cumulative ACK for SeqNo=121, current base=121
+[ACK] Cumulative ACK for SeqNo=121, New base=122 (advanced from 121)
+[SEND] Reliable SeqNo=122, Len=11, Data='Message 122...'
+[SEND] Message 122: 'Message 122'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=122
+[DEBUG] Processing cumulative ACK for SeqNo=122, current base=122
+[ACK] Cumulative ACK for SeqNo=122, New base=123 (advanced from 122)
+[SEND] Reliable SeqNo=123, Len=11, Data='Message 123...'
+[SEND] Message 123: 'Message 123'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=123
+[DEBUG] Processing cumulative ACK for SeqNo=123, current base=123
+[ACK] Cumulative ACK for SeqNo=123, New base=124 (advanced from 123)
+[SEND] Reliable SeqNo=124, Len=11, Data='Message 124...'
+[SEND] Message 124: 'Message 124'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=124
+[DEBUG] Processing cumulative ACK for SeqNo=124, current base=124
+[ACK] Cumulative ACK for SeqNo=124, New base=125 (advanced from 124)
+[SEND] Reliable SeqNo=125, Len=11, Data='Message 125...'
+[SEND] Message 125: 'Message 125'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=125
+[DEBUG] Processing cumulative ACK for SeqNo=125, current base=125
+[ACK] Cumulative ACK for SeqNo=125, New base=126 (advanced from 125)
+[SEND] Reliable SeqNo=126, Len=11, Data='Message 126...'
+[SEND] Message 126: 'Message 126'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=126
+[DEBUG] Processing cumulative ACK for SeqNo=126, current base=126
+[ACK] Cumulative ACK for SeqNo=126, New base=127 (advanced from 126)
+[SEND] Reliable SeqNo=127, Len=11, Data='Message 127...'
+[SEND] Message 127: 'Message 127'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=127
+[DEBUG] Processing cumulative ACK for SeqNo=127, current base=127
+[ACK] Cumulative ACK for SeqNo=127, New base=128 (advanced from 127)
+[SEND] Reliable SeqNo=128, Len=11, Data='Message 128...'
+[SEND] Message 128: 'Message 128'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=128
+[DEBUG] Processing cumulative ACK for SeqNo=128, current base=128
+[ACK] Cumulative ACK for SeqNo=128, New base=129 (advanced from 128)
+[SEND] Reliable SeqNo=129, Len=11, Data='Message 129...'
+[SEND] Message 129: 'Message 129'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=129
+[DEBUG] Processing cumulative ACK for SeqNo=129, current base=129
+[ACK] Cumulative ACK for SeqNo=129, New base=130 (advanced from 129)
+[SEND] Reliable SeqNo=130, Len=11, Data='Message 130...'
+[SEND] Message 130: 'Message 130'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=130
+[DEBUG] Processing cumulative ACK for SeqNo=130, current base=130
+[ACK] Cumulative ACK for SeqNo=130, New base=131 (advanced from 130)
+[SEND] Reliable SeqNo=131, Len=11, Data='Message 131...'
+[SEND] Message 131: 'Message 131'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=131
+[DEBUG] Processing cumulative ACK for SeqNo=131, current base=131
+[ACK] Cumulative ACK for SeqNo=131, New base=132 (advanced from 131)
+[SEND] Reliable SeqNo=132, Len=11, Data='Message 132...'
+[SEND] Message 132: 'Message 132'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=132
+[DEBUG] Processing cumulative ACK for SeqNo=132, current base=132
+[ACK] Cumulative ACK for SeqNo=132, New base=133 (advanced from 132)
+[SEND] Reliable SeqNo=133, Len=11, Data='Message 133...'
+[SEND] Message 133: 'Message 133'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=133
+[DEBUG] Processing cumulative ACK for SeqNo=133, current base=133
+[ACK] Cumulative ACK for SeqNo=133, New base=134 (advanced from 133)
+[SEND] Reliable SeqNo=134, Len=11, Data='Message 134...'
+[SEND] Message 134: 'Message 134'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=134
+[DEBUG] Processing cumulative ACK for SeqNo=134, current base=134
+[ACK] Cumulative ACK for SeqNo=134, New base=135 (advanced from 134)
+[SEND] Reliable SeqNo=135, Len=11, Data='Message 135...'
+[SEND] Message 135: 'Message 135'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=135
+[DEBUG] Processing cumulative ACK for SeqNo=135, current base=135
+[ACK] Cumulative ACK for SeqNo=135, New base=136 (advanced from 135)
+[SEND] Reliable SeqNo=136, Len=11, Data='Message 136...'
+[SEND] Message 136: 'Message 136'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=136
+[DEBUG] Processing cumulative ACK for SeqNo=136, current base=136
+[ACK] Cumulative ACK for SeqNo=136, New base=137 (advanced from 136)
+[SEND] Reliable SeqNo=137, Len=11, Data='Message 137...'
+[SEND] Message 137: 'Message 137'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=137
+[DEBUG] Processing cumulative ACK for SeqNo=137, current base=137
+[ACK] Cumulative ACK for SeqNo=137, New base=138 (advanced from 137)
+[SEND] Reliable SeqNo=138, Len=11, Data='Message 138...'
+[SEND] Message 138: 'Message 138'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=138
+[DEBUG] Processing cumulative ACK for SeqNo=138, current base=138
+[ACK] Cumulative ACK for SeqNo=138, New base=139 (advanced from 138)
+[SEND] Reliable SeqNo=139, Len=11, Data='Message 139...'
+[SEND] Message 139: 'Message 139'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=139
+[DEBUG] Processing cumulative ACK for SeqNo=139, current base=139
+[ACK] Cumulative ACK for SeqNo=139, New base=140 (advanced from 139)
+[SEND] Reliable SeqNo=140, Len=11, Data='Message 140...'
+[SEND] Message 140: 'Message 140'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=140
+[DEBUG] Processing cumulative ACK for SeqNo=140, current base=140
+[ACK] Cumulative ACK for SeqNo=140, New base=141 (advanced from 140)
+[SEND] Reliable SeqNo=141, Len=11, Data='Message 141...'
+[SEND] Message 141: 'Message 141'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=141
+[DEBUG] Processing cumulative ACK for SeqNo=141, current base=141
+[ACK] Cumulative ACK for SeqNo=141, New base=142 (advanced from 141)
+[SEND] Reliable SeqNo=142, Len=11, Data='Message 142...'
+[SEND] Message 142: 'Message 142'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=142
+[DEBUG] Processing cumulative ACK for SeqNo=142, current base=142
+[ACK] Cumulative ACK for SeqNo=142, New base=143 (advanced from 142)
+[SEND] Reliable SeqNo=143, Len=11, Data='Message 143...'
+[SEND] Message 143: 'Message 143'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=143
+[DEBUG] Processing cumulative ACK for SeqNo=143, current base=143
+[ACK] Cumulative ACK for SeqNo=143, New base=144 (advanced from 143)
+[SEND] Reliable SeqNo=144, Len=11, Data='Message 144...'
+[SEND] Message 144: 'Message 144'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=144
+[DEBUG] Processing cumulative ACK for SeqNo=144, current base=144
+[ACK] Cumulative ACK for SeqNo=144, New base=145 (advanced from 144)
+[SEND] Reliable SeqNo=145, Len=11, Data='Message 145...'
+[SEND] Message 145: 'Message 145'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=145
+[DEBUG] Processing cumulative ACK for SeqNo=145, current base=145
+[ACK] Cumulative ACK for SeqNo=145, New base=146 (advanced from 145)
+[SEND] Reliable SeqNo=146, Len=11, Data='Message 146...'
+[SEND] Message 146: 'Message 146'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=146
+[DEBUG] Processing cumulative ACK for SeqNo=146, current base=146
+[ACK] Cumulative ACK for SeqNo=146, New base=147 (advanced from 146)
+[SEND] Reliable SeqNo=147, Len=11, Data='Message 147...'
+[SEND] Message 147: 'Message 147'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=147
+[DEBUG] Processing cumulative ACK for SeqNo=147, current base=147
+[ACK] Cumulative ACK for SeqNo=147, New base=148 (advanced from 147)
+[SEND] Reliable SeqNo=148, Len=11, Data='Message 148...'
+[SEND] Message 148: 'Message 148'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=148
+[DEBUG] Processing cumulative ACK for SeqNo=148, current base=148
+[ACK] Cumulative ACK for SeqNo=148, New base=149 (advanced from 148)
+[SEND] Reliable SeqNo=149, Len=11, Data='Message 149...'
+[SEND] Message 149: 'Message 149'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=149
+[DEBUG] Processing cumulative ACK for SeqNo=149, current base=149
+[ACK] Cumulative ACK for SeqNo=149, New base=150 (advanced from 149)
+[SEND] Reliable SeqNo=150, Len=11, Data='Message 150...'
+[SEND] Message 150: 'Message 150'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=150
+[DEBUG] Processing cumulative ACK for SeqNo=150, current base=150
+[ACK] Cumulative ACK for SeqNo=150, New base=151 (advanced from 150)
+[SEND] Reliable SeqNo=151, Len=11, Data='Message 151...'
+[SEND] Message 151: 'Message 151'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=151
+[DEBUG] Processing cumulative ACK for SeqNo=151, current base=151
+[ACK] Cumulative ACK for SeqNo=151, New base=152 (advanced from 151)
+[SEND] Reliable SeqNo=152, Len=11, Data='Message 152...'
+[SEND] Message 152: 'Message 152'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=152
+[DEBUG] Processing cumulative ACK for SeqNo=152, current base=152
+[ACK] Cumulative ACK for SeqNo=152, New base=153 (advanced from 152)
+[SEND] Reliable SeqNo=153, Len=11, Data='Message 153...'
+[SEND] Message 153: 'Message 153'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=153
+[DEBUG] Processing cumulative ACK for SeqNo=153, current base=153
+[ACK] Cumulative ACK for SeqNo=153, New base=154 (advanced from 153)
+[SEND] Reliable SeqNo=154, Len=11, Data='Message 154...'
+[SEND] Message 154: 'Message 154'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=154
+[DEBUG] Processing cumulative ACK for SeqNo=154, current base=154
+[ACK] Cumulative ACK for SeqNo=154, New base=155 (advanced from 154)
+[SEND] Reliable SeqNo=155, Len=11, Data='Message 155...'
+[SEND] Message 155: 'Message 155'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=155
+[DEBUG] Processing cumulative ACK for SeqNo=155, current base=155
+[ACK] Cumulative ACK for SeqNo=155, New base=156 (advanced from 155)
+[SEND] Reliable SeqNo=156, Len=11, Data='Message 156...'
+[SEND] Message 156: 'Message 156'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=156
+[DEBUG] Processing cumulative ACK for SeqNo=156, current base=156
+[ACK] Cumulative ACK for SeqNo=156, New base=157 (advanced from 156)
+[SEND] Reliable SeqNo=157, Len=11, Data='Message 157...'
+[SEND] Message 157: 'Message 157'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=157
+[DEBUG] Processing cumulative ACK for SeqNo=157, current base=157
+[ACK] Cumulative ACK for SeqNo=157, New base=158 (advanced from 157)
+[SEND] Reliable SeqNo=158, Len=11, Data='Message 158...'
+[SEND] Message 158: 'Message 158'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=158
+[DEBUG] Processing cumulative ACK for SeqNo=158, current base=158
+[ACK] Cumulative ACK for SeqNo=158, New base=159 (advanced from 158)
+[SEND] Reliable SeqNo=159, Len=11, Data='Message 159...'
+[SEND] Message 159: 'Message 159'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=159
+[DEBUG] Processing cumulative ACK for SeqNo=159, current base=159
+[ACK] Cumulative ACK for SeqNo=159, New base=160 (advanced from 159)
+[SEND] Reliable SeqNo=160, Len=11, Data='Message 160...'
+[SEND] Message 160: 'Message 160'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=160
+[DEBUG] Processing cumulative ACK for SeqNo=160, current base=160
+[ACK] Cumulative ACK for SeqNo=160, New base=161 (advanced from 160)
+[SEND] Reliable SeqNo=161, Len=11, Data='Message 161...'
+[SEND] Message 161: 'Message 161'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=161
+[DEBUG] Processing cumulative ACK for SeqNo=161, current base=161
+[ACK] Cumulative ACK for SeqNo=161, New base=162 (advanced from 161)
+[SEND] Reliable SeqNo=162, Len=11, Data='Message 162...'
+[SEND] Message 162: 'Message 162'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=162
+[DEBUG] Processing cumulative ACK for SeqNo=162, current base=162
+[ACK] Cumulative ACK for SeqNo=162, New base=163 (advanced from 162)
+[SEND] Reliable SeqNo=163, Len=11, Data='Message 163...'
+[SEND] Message 163: 'Message 163'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=163
+[DEBUG] Processing cumulative ACK for SeqNo=163, current base=163
+[ACK] Cumulative ACK for SeqNo=163, New base=164 (advanced from 163)
+[SEND] Reliable SeqNo=164, Len=11, Data='Message 164...'
+[SEND] Message 164: 'Message 164'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=164
+[DEBUG] Processing cumulative ACK for SeqNo=164, current base=164
+[ACK] Cumulative ACK for SeqNo=164, New base=165 (advanced from 164)
+[SEND] Reliable SeqNo=165, Len=11, Data='Message 165...'
+[SEND] Message 165: 'Message 165'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=165
+[DEBUG] Processing cumulative ACK for SeqNo=165, current base=165
+[ACK] Cumulative ACK for SeqNo=165, New base=166 (advanced from 165)
+[SEND] Reliable SeqNo=166, Len=11, Data='Message 166...'
+[SEND] Message 166: 'Message 166'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=166
+[DEBUG] Processing cumulative ACK for SeqNo=166, current base=166
+[ACK] Cumulative ACK for SeqNo=166, New base=167 (advanced from 166)
+[SEND] Reliable SeqNo=167, Len=11, Data='Message 167...'
+[SEND] Message 167: 'Message 167'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=167
+[DEBUG] Processing cumulative ACK for SeqNo=167, current base=167
+[ACK] Cumulative ACK for SeqNo=167, New base=168 (advanced from 167)
+[SEND] Reliable SeqNo=168, Len=11, Data='Message 168...'
+[SEND] Message 168: 'Message 168'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=168
+[DEBUG] Processing cumulative ACK for SeqNo=168, current base=168
+[ACK] Cumulative ACK for SeqNo=168, New base=169 (advanced from 168)
+[SEND] Reliable SeqNo=169, Len=11, Data='Message 169...'
+[SEND] Message 169: 'Message 169'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=169
+[DEBUG] Processing cumulative ACK for SeqNo=169, current base=169
+[ACK] Cumulative ACK for SeqNo=169, New base=170 (advanced from 169)
+[SEND] Reliable SeqNo=170, Len=11, Data='Message 170...'
+[SEND] Message 170: 'Message 170'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=170
+[DEBUG] Processing cumulative ACK for SeqNo=170, current base=170
+[ACK] Cumulative ACK for SeqNo=170, New base=171 (advanced from 170)
+[SEND] Reliable SeqNo=171, Len=11, Data='Message 171...'
+[SEND] Message 171: 'Message 171'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=171
+[DEBUG] Processing cumulative ACK for SeqNo=171, current base=171
+[ACK] Cumulative ACK for SeqNo=171, New base=172 (advanced from 171)
+[SEND] Reliable SeqNo=172, Len=11, Data='Message 172...'
+[SEND] Message 172: 'Message 172'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=172
+[DEBUG] Processing cumulative ACK for SeqNo=172, current base=172
+[ACK] Cumulative ACK for SeqNo=172, New base=173 (advanced from 172)
+[SEND] Reliable SeqNo=173, Len=11, Data='Message 173...'
+[SEND] Message 173: 'Message 173'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=173
+[DEBUG] Processing cumulative ACK for SeqNo=173, current base=173
+[ACK] Cumulative ACK for SeqNo=173, New base=174 (advanced from 173)
+[SEND] Reliable SeqNo=174, Len=11, Data='Message 174...'
+[SEND] Message 174: 'Message 174'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=174
+[DEBUG] Processing cumulative ACK for SeqNo=174, current base=174
+[ACK] Cumulative ACK for SeqNo=174, New base=175 (advanced from 174)
+[SEND] Reliable SeqNo=175, Len=11, Data='Message 175...'
+[SEND] Message 175: 'Message 175'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=175
+[DEBUG] Processing cumulative ACK for SeqNo=175, current base=175
+[ACK] Cumulative ACK for SeqNo=175, New base=176 (advanced from 175)
+[SEND] Reliable SeqNo=176, Len=11, Data='Message 176...'
+[SEND] Message 176: 'Message 176'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=176
+[DEBUG] Processing cumulative ACK for SeqNo=176, current base=176
+[ACK] Cumulative ACK for SeqNo=176, New base=177 (advanced from 176)
+[SEND] Reliable SeqNo=177, Len=11, Data='Message 177...'
+[SEND] Message 177: 'Message 177'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=177
+[DEBUG] Processing cumulative ACK for SeqNo=177, current base=177
+[ACK] Cumulative ACK for SeqNo=177, New base=178 (advanced from 177)
+[SEND] Reliable SeqNo=178, Len=11, Data='Message 178...'
+[SEND] Message 178: 'Message 178'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=178
+[DEBUG] Processing cumulative ACK for SeqNo=178, current base=178
+[ACK] Cumulative ACK for SeqNo=178, New base=179 (advanced from 178)
+[SEND] Reliable SeqNo=179, Len=11, Data='Message 179...'
+[SEND] Message 179: 'Message 179'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=179
+[DEBUG] Processing cumulative ACK for SeqNo=179, current base=179
+[ACK] Cumulative ACK for SeqNo=179, New base=180 (advanced from 179)
+[SEND] Reliable SeqNo=180, Len=11, Data='Message 180...'
+[SEND] Message 180: 'Message 180'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=180
+[DEBUG] Processing cumulative ACK for SeqNo=180, current base=180
+[ACK] Cumulative ACK for SeqNo=180, New base=181 (advanced from 180)
+[SEND] Reliable SeqNo=181, Len=11, Data='Message 181...'
+[SEND] Message 181: 'Message 181'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=181
+[DEBUG] Processing cumulative ACK for SeqNo=181, current base=181
+[ACK] Cumulative ACK for SeqNo=181, New base=182 (advanced from 181)
+[SEND] Reliable SeqNo=182, Len=11, Data='Message 182...'
+[SEND] Message 182: 'Message 182'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=182
+[DEBUG] Processing cumulative ACK for SeqNo=182, current base=182
+[ACK] Cumulative ACK for SeqNo=182, New base=183 (advanced from 182)
+[SEND] Reliable SeqNo=183, Len=11, Data='Message 183...'
+[SEND] Message 183: 'Message 183'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=183
+[DEBUG] Processing cumulative ACK for SeqNo=183, current base=183
+[ACK] Cumulative ACK for SeqNo=183, New base=184 (advanced from 183)
+[SEND] Reliable SeqNo=184, Len=11, Data='Message 184...'
+[SEND] Message 184: 'Message 184'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=184
+[DEBUG] Processing cumulative ACK for SeqNo=184, current base=184
+[ACK] Cumulative ACK for SeqNo=184, New base=185 (advanced from 184)
+[SEND] Reliable SeqNo=185, Len=11, Data='Message 185...'
+[SEND] Message 185: 'Message 185'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=185
+[DEBUG] Processing cumulative ACK for SeqNo=185, current base=185
+[ACK] Cumulative ACK for SeqNo=185, New base=186 (advanced from 185)
+[SEND] Reliable SeqNo=186, Len=11, Data='Message 186...'
+[SEND] Message 186: 'Message 186'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=186
+[DEBUG] Processing cumulative ACK for SeqNo=186, current base=186
+[ACK] Cumulative ACK for SeqNo=186, New base=187 (advanced from 186)
+[SEND] Reliable SeqNo=187, Len=11, Data='Message 187...'
+[SEND] Message 187: 'Message 187'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=187
+[DEBUG] Processing cumulative ACK for SeqNo=187, current base=187
+[ACK] Cumulative ACK for SeqNo=187, New base=188 (advanced from 187)
+[SEND] Reliable SeqNo=188, Len=11, Data='Message 188...'
+[SEND] Message 188: 'Message 188'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=188
+[DEBUG] Processing cumulative ACK for SeqNo=188, current base=188
+[ACK] Cumulative ACK for SeqNo=188, New base=189 (advanced from 188)
+[SEND] Reliable SeqNo=189, Len=11, Data='Message 189...'
+[SEND] Message 189: 'Message 189'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=189
+[DEBUG] Processing cumulative ACK for SeqNo=189, current base=189
+[ACK] Cumulative ACK for SeqNo=189, New base=190 (advanced from 189)
+[SEND] Reliable SeqNo=190, Len=11, Data='Message 190...'
+[SEND] Message 190: 'Message 190'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=190
+[DEBUG] Processing cumulative ACK for SeqNo=190, current base=190
+[ACK] Cumulative ACK for SeqNo=190, New base=191 (advanced from 190)
+[SEND] Reliable SeqNo=191, Len=11, Data='Message 191...'
+[SEND] Message 191: 'Message 191'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=191
+[DEBUG] Processing cumulative ACK for SeqNo=191, current base=191
+[ACK] Cumulative ACK for SeqNo=191, New base=192 (advanced from 191)
+[SEND] Reliable SeqNo=192, Len=11, Data='Message 192...'
+[SEND] Message 192: 'Message 192'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=192
+[DEBUG] Processing cumulative ACK for SeqNo=192, current base=192
+[ACK] Cumulative ACK for SeqNo=192, New base=193 (advanced from 192)
+[SEND] Reliable SeqNo=193, Len=11, Data='Message 193...'
+[SEND] Message 193: 'Message 193'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=193
+[DEBUG] Processing cumulative ACK for SeqNo=193, current base=193
+[ACK] Cumulative ACK for SeqNo=193, New base=194 (advanced from 193)
+[SEND] Reliable SeqNo=194, Len=11, Data='Message 194...'
+[SEND] Message 194: 'Message 194'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=194
+[DEBUG] Processing cumulative ACK for SeqNo=194, current base=194
+[ACK] Cumulative ACK for SeqNo=194, New base=195 (advanced from 194)
+[SEND] Reliable SeqNo=195, Len=11, Data='Message 195...'
+[SEND] Message 195: 'Message 195'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=195
+[DEBUG] Processing cumulative ACK for SeqNo=195, current base=195
+[ACK] Cumulative ACK for SeqNo=195, New base=196 (advanced from 195)
+[SEND] Reliable SeqNo=196, Len=11, Data='Message 196...'
+[SEND] Message 196: 'Message 196'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=196
+[DEBUG] Processing cumulative ACK for SeqNo=196, current base=196
+[ACK] Cumulative ACK for SeqNo=196, New base=197 (advanced from 196)
+[SEND] Reliable SeqNo=197, Len=11, Data='Message 197...'
+[SEND] Message 197: 'Message 197'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=197
+[DEBUG] Processing cumulative ACK for SeqNo=197, current base=197
+[ACK] Cumulative ACK for SeqNo=197, New base=198 (advanced from 197)
+[SEND] Reliable SeqNo=198, Len=11, Data='Message 198...'
+[SEND] Message 198: 'Message 198'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=198
+[DEBUG] Processing cumulative ACK for SeqNo=198, current base=198
+[ACK] Cumulative ACK for SeqNo=198, New base=199 (advanced from 198)
+[SEND] Reliable SeqNo=199, Len=11, Data='Message 199...'
+[SEND] Message 199: 'Message 199'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=199
+[DEBUG] Processing cumulative ACK for SeqNo=199, current base=199
+[ACK] Cumulative ACK for SeqNo=199, New base=200 (advanced from 199)
+[SEND] Reliable SeqNo=200, Len=11, Data='Message 200...'
+[SEND] Message 200: 'Message 200'
+[DEBUG] Event received: StreamDataReceived
+[DEBUG] StreamDataReceived event with data length 9
+[DEBUG] Received ACK for SeqNo=200
+[DEBUG] Processing cumulative ACK for SeqNo=200, current base=200
+[ACK] Cumulative ACK for SeqNo=200, New base=201 (advanced from 200)
+
+Waiting for all messages to be delivered...
+
+=== PERFORMANCE METRICS [Sender-Rapid reliable messages] ===
+Duration:                     3.27s
+Total Packets Sent:           200
+Send Throughput:              639.63 bytes/sec
+
+-- Reliable Channel --
+Packets Sent:                 200
+Send Throughput:              639.63 bytes/sec
+Average RTT:                  1.71 ms
+Packet Delivery Ratio:        N/A (requires receiver data)
+
+-- Unreliable Channel --
+Packets Sent:                 0
+Send Throughput:              0.00 bytes/sec
+Packet Delivery Ratio:        N/A (requires receiver data)
+============================================================
+
+[INFO] Sender metrics saved to results/Sender-Rapid reliable messages.json
+[DEBUG] Event received: ConnectionTerminated
+[Sender] Connection closed
+======================================================================
+TEST RESULTS: Rapid reliable messages
+======================================================================
+Messages sent:     200
+Messages received: 4000
+
+Ordering check: ✗ FAIL
+Result: Out of order! Sequence numbers not strictly increasing: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200]
+======================================================================
+
+
+>>> Running Test 4: Unreliable messages
+
+######################################################################
+TEST: Unreliable messages
+######################################################################
+
+======================================================================
+Sending 200 UNRELIABLE messages
+======================================================================
+
+[Sender] Connecting to 127.0.0.1:4433...
+[DEBUG] Event received: ProtocolNegotiated
+[DEBUG] Event received: HandshakeCompleted
+[Sender] Connected successfully!
+[SEND] Unreliable SeqNo=1, Len=9, Data='Message 1...'
+[SEND] Message 1: 'Message 1'
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[DEBUG] Event received: ConnectionIdIssued
+[SEND] Unreliable SeqNo=2, Len=9, Data='Message 2...'
+[SEND] Message 2: 'Message 2'
+[SEND] Unreliable SeqNo=3, Len=9, Data='Message 3...'
+[SEND] Message 3: 'Message 3'
+[SEND] Unreliable SeqNo=4, Len=9, Data='Message 4...'
+[SEND] Message 4: 'Message 4'
+[SEND] Unreliable SeqNo=5, Len=9, Data='Message 5...'
+[SEND] Message 5: 'Message 5'
+[SEND] Unreliable SeqNo=6, Len=9, Data='Message 6...'
+[SEND] Message 6: 'Message 6'
+[SEND] Unreliable SeqNo=7, Len=9, Data='Message 7...'
+[SEND] Message 7: 'Message 7'
+[SEND] Unreliable SeqNo=8, Len=9, Data='Message 8...'
+[SEND] Message 8: 'Message 8'
+[SEND] Unreliable SeqNo=9, Len=9, Data='Message 9...'
+[SEND] Message 9: 'Message 9'
+[SEND] Unreliable SeqNo=10, Len=10, Data='Message 10...'
+[SEND] Message 10: 'Message 10'
+[SEND] Unreliable SeqNo=11, Len=10, Data='Message 11...'
+[SEND] Message 11: 'Message 11'
+[SEND] Unreliable SeqNo=12, Len=10, Data='Message 12...'
+[SEND] Message 12: 'Message 12'
+[SEND] Unreliable SeqNo=13, Len=10, Data='Message 13...'
+[SEND] Message 13: 'Message 13'
+[SEND] Unreliable SeqNo=14, Len=10, Data='Message 14...'
+[SEND] Message 14: 'Message 14'
+[SEND] Unreliable SeqNo=15, Len=10, Data='Message 15...'
+[SEND] Message 15: 'Message 15'
+[SEND] Unreliable SeqNo=16, Len=10, Data='Message 16...'
+[SEND] Message 16: 'Message 16'
+[SEND] Unreliable SeqNo=17, Len=10, Data='Message 17...'
+[SEND] Message 17: 'Message 17'
+[SEND] Unreliable SeqNo=18, Len=10, Data='Message 18...'
+[SEND] Message 18: 'Message 18'
+[SEND] Unreliable SeqNo=19, Len=10, Data='Message 19...'
+[SEND] Message 19: 'Message 19'
+[SEND] Unreliable SeqNo=20, Len=10, Data='Message 20...'
+[SEND] Message 20: 'Message 20'
+[SEND] Unreliable SeqNo=21, Len=10, Data='Message 21...'
+[SEND] Message 21: 'Message 21'
+[SEND] Unreliable SeqNo=22, Len=10, Data='Message 22...'
+[SEND] Message 22: 'Message 22'
+[SEND] Unreliable SeqNo=23, Len=10, Data='Message 23...'
+[SEND] Message 23: 'Message 23'
+[SEND] Unreliable SeqNo=24, Len=10, Data='Message 24...'
+[SEND] Message 24: 'Message 24'
+[SEND] Unreliable SeqNo=25, Len=10, Data='Message 25...'
+[SEND] Message 25: 'Message 25'
+[SEND] Unreliable SeqNo=26, Len=10, Data='Message 26...'
+[SEND] Message 26: 'Message 26'
+[SEND] Unreliable SeqNo=27, Len=10, Data='Message 27...'
+[SEND] Message 27: 'Message 27'
+[SEND] Unreliable SeqNo=28, Len=10, Data='Message 28...'
+[SEND] Message 28: 'Message 28'
+[SEND] Unreliable SeqNo=29, Len=10, Data='Message 29...'
+[SEND] Message 29: 'Message 29'
+[SEND] Unreliable SeqNo=30, Len=10, Data='Message 30...'
+[SEND] Message 30: 'Message 30'
+[SEND] Unreliable SeqNo=31, Len=10, Data='Message 31...'
+[SEND] Message 31: 'Message 31'
+[SEND] Unreliable SeqNo=32, Len=10, Data='Message 32...'
+[SEND] Message 32: 'Message 32'
+[SEND] Unreliable SeqNo=33, Len=10, Data='Message 33...'
+[SEND] Message 33: 'Message 33'
+[SEND] Unreliable SeqNo=34, Len=10, Data='Message 34...'
+[SEND] Message 34: 'Message 34'
+[SEND] Unreliable SeqNo=35, Len=10, Data='Message 35...'
+[SEND] Message 35: 'Message 35'
+[SEND] Unreliable SeqNo=36, Len=10, Data='Message 36...'
+[SEND] Message 36: 'Message 36'
+[SEND] Unreliable SeqNo=37, Len=10, Data='Message 37...'
+[SEND] Message 37: 'Message 37'
+[SEND] Unreliable SeqNo=38, Len=10, Data='Message 38...'
+[SEND] Message 38: 'Message 38'
+[SEND] Unreliable SeqNo=39, Len=10, Data='Message 39...'
+[SEND] Message 39: 'Message 39'
+[SEND] Unreliable SeqNo=40, Len=10, Data='Message 40...'
+[SEND] Message 40: 'Message 40'
+[SEND] Unreliable SeqNo=41, Len=10, Data='Message 41...'
+[SEND] Message 41: 'Message 41'
+[SEND] Unreliable SeqNo=42, Len=10, Data='Message 42...'
+[SEND] Message 42: 'Message 42'
+[SEND] Unreliable SeqNo=43, Len=10, Data='Message 43...'
+[SEND] Message 43: 'Message 43'
+[SEND] Unreliable SeqNo=44, Len=10, Data='Message 44...'
+[SEND] Message 44: 'Message 44'
+[SEND] Unreliable SeqNo=45, Len=10, Data='Message 45...'
+[SEND] Message 45: 'Message 45'
+[SEND] Unreliable SeqNo=46, Len=10, Data='Message 46...'
+[SEND] Message 46: 'Message 46'
+[SEND] Unreliable SeqNo=47, Len=10, Data='Message 47...'
+[SEND] Message 47: 'Message 47'
+[SEND] Unreliable SeqNo=48, Len=10, Data='Message 48...'
+[SEND] Message 48: 'Message 48'
+[SEND] Unreliable SeqNo=49, Len=10, Data='Message 49...'
+[SEND] Message 49: 'Message 49'
+[SEND] Unreliable SeqNo=50, Len=10, Data='Message 50...'
+[SEND] Message 50: 'Message 50'
+[SEND] Unreliable SeqNo=51, Len=10, Data='Message 51...'
+[SEND] Message 51: 'Message 51'
+[SEND] Unreliable SeqNo=52, Len=10, Data='Message 52...'
+[SEND] Message 52: 'Message 52'
+[SEND] Unreliable SeqNo=53, Len=10, Data='Message 53...'
+[SEND] Message 53: 'Message 53'
+[SEND] Unreliable SeqNo=54, Len=10, Data='Message 54...'
+[SEND] Message 54: 'Message 54'
+[SEND] Unreliable SeqNo=55, Len=10, Data='Message 55...'
+[SEND] Message 55: 'Message 55'
+[SEND] Unreliable SeqNo=56, Len=10, Data='Message 56...'
+[SEND] Message 56: 'Message 56'
+[SEND] Unreliable SeqNo=57, Len=10, Data='Message 57...'
+[SEND] Message 57: 'Message 57'
+[SEND] Unreliable SeqNo=58, Len=10, Data='Message 58...'
+[SEND] Message 58: 'Message 58'
+[SEND] Unreliable SeqNo=59, Len=10, Data='Message 59...'
+[SEND] Message 59: 'Message 59'
+[SEND] Unreliable SeqNo=60, Len=10, Data='Message 60...'
+[SEND] Message 60: 'Message 60'
+[SEND] Unreliable SeqNo=61, Len=10, Data='Message 61...'
+[SEND] Message 61: 'Message 61'
+[SEND] Unreliable SeqNo=62, Len=10, Data='Message 62...'
+[SEND] Message 62: 'Message 62'
+[SEND] Unreliable SeqNo=63, Len=10, Data='Message 63...'
+[SEND] Message 63: 'Message 63'
+[SEND] Unreliable SeqNo=64, Len=10, Data='Message 64...'
+[SEND] Message 64: 'Message 64'
+[SEND] Unreliable SeqNo=65, Len=10, Data='Message 65...'
+[SEND] Message 65: 'Message 65'
+[SEND] Unreliable SeqNo=66, Len=10, Data='Message 66...'
+[SEND] Message 66: 'Message 66'
+[SEND] Unreliable SeqNo=67, Len=10, Data='Message 67...'
+[SEND] Message 67: 'Message 67'
+[SEND] Unreliable SeqNo=68, Len=10, Data='Message 68...'
+[SEND] Message 68: 'Message 68'
+[SEND] Unreliable SeqNo=69, Len=10, Data='Message 69...'
+[SEND] Message 69: 'Message 69'
+[SEND] Unreliable SeqNo=70, Len=10, Data='Message 70...'
+[SEND] Message 70: 'Message 70'
+[SEND] Unreliable SeqNo=71, Len=10, Data='Message 71...'
+[SEND] Message 71: 'Message 71'
+[SEND] Unreliable SeqNo=72, Len=10, Data='Message 72...'
+[SEND] Message 72: 'Message 72'
+[SEND] Unreliable SeqNo=73, Len=10, Data='Message 73...'
+[SEND] Message 73: 'Message 73'
+[SEND] Unreliable SeqNo=74, Len=10, Data='Message 74...'
+[SEND] Message 74: 'Message 74'
+[SEND] Unreliable SeqNo=75, Len=10, Data='Message 75...'
+[SEND] Message 75: 'Message 75'
+[SEND] Unreliable SeqNo=76, Len=10, Data='Message 76...'
+[SEND] Message 76: 'Message 76'
+[SEND] Unreliable SeqNo=77, Len=10, Data='Message 77...'
+[SEND] Message 77: 'Message 77'
+[SEND] Unreliable SeqNo=78, Len=10, Data='Message 78...'
+[SEND] Message 78: 'Message 78'
+[SEND] Unreliable SeqNo=79, Len=10, Data='Message 79...'
+[SEND] Message 79: 'Message 79'
+[SEND] Unreliable SeqNo=80, Len=10, Data='Message 80...'
+[SEND] Message 80: 'Message 80'
+[SEND] Unreliable SeqNo=81, Len=10, Data='Message 81...'
+[SEND] Message 81: 'Message 81'
+[SEND] Unreliable SeqNo=82, Len=10, Data='Message 82...'
+[SEND] Message 82: 'Message 82'
+[SEND] Unreliable SeqNo=83, Len=10, Data='Message 83...'
+[SEND] Message 83: 'Message 83'
+[SEND] Unreliable SeqNo=84, Len=10, Data='Message 84...'
+[SEND] Message 84: 'Message 84'
+[SEND] Unreliable SeqNo=85, Len=10, Data='Message 85...'
+[SEND] Message 85: 'Message 85'
+[SEND] Unreliable SeqNo=86, Len=10, Data='Message 86...'
+[SEND] Message 86: 'Message 86'
+[SEND] Unreliable SeqNo=87, Len=10, Data='Message 87...'
+[SEND] Message 87: 'Message 87'
+[SEND] Unreliable SeqNo=88, Len=10, Data='Message 88...'
+[SEND] Message 88: 'Message 88'
+[SEND] Unreliable SeqNo=89, Len=10, Data='Message 89...'
+[SEND] Message 89: 'Message 89'
+[SEND] Unreliable SeqNo=90, Len=10, Data='Message 90...'
+[SEND] Message 90: 'Message 90'
+[SEND] Unreliable SeqNo=91, Len=10, Data='Message 91...'
+[SEND] Message 91: 'Message 91'
+[SEND] Unreliable SeqNo=92, Len=10, Data='Message 92...'
+[SEND] Message 92: 'Message 92'
+[SEND] Unreliable SeqNo=93, Len=10, Data='Message 93...'
+[SEND] Message 93: 'Message 93'
+[SEND] Unreliable SeqNo=94, Len=10, Data='Message 94...'
+[SEND] Message 94: 'Message 94'
+[SEND] Unreliable SeqNo=95, Len=10, Data='Message 95...'
+[SEND] Message 95: 'Message 95'
+[SEND] Unreliable SeqNo=96, Len=10, Data='Message 96...'
+[SEND] Message 96: 'Message 96'
+[SEND] Unreliable SeqNo=97, Len=10, Data='Message 97...'
+[SEND] Message 97: 'Message 97'
+[SEND] Unreliable SeqNo=98, Len=10, Data='Message 98...'
+[SEND] Message 98: 'Message 98'
+[SEND] Unreliable SeqNo=99, Len=10, Data='Message 99...'
+[SEND] Message 99: 'Message 99'
+[SEND] Unreliable SeqNo=100, Len=11, Data='Message 100...'
+[SEND] Message 100: 'Message 100'
+[SEND] Unreliable SeqNo=101, Len=11, Data='Message 101...'
+[SEND] Message 101: 'Message 101'
+[SEND] Unreliable SeqNo=102, Len=11, Data='Message 102...'
+[SEND] Message 102: 'Message 102'
+[SEND] Unreliable SeqNo=103, Len=11, Data='Message 103...'
+[SEND] Message 103: 'Message 103'
+[SEND] Unreliable SeqNo=104, Len=11, Data='Message 104...'
+[SEND] Message 104: 'Message 104'
+[SEND] Unreliable SeqNo=105, Len=11, Data='Message 105...'
+[SEND] Message 105: 'Message 105'
+[SEND] Unreliable SeqNo=106, Len=11, Data='Message 106...'
+[SEND] Message 106: 'Message 106'
+[SEND] Unreliable SeqNo=107, Len=11, Data='Message 107...'
+[SEND] Message 107: 'Message 107'
+[SEND] Unreliable SeqNo=108, Len=11, Data='Message 108...'
+[SEND] Message 108: 'Message 108'
+[SEND] Unreliable SeqNo=109, Len=11, Data='Message 109...'
+[SEND] Message 109: 'Message 109'
+[SEND] Unreliable SeqNo=110, Len=11, Data='Message 110...'
+[SEND] Message 110: 'Message 110'
+[SEND] Unreliable SeqNo=111, Len=11, Data='Message 111...'
+[SEND] Message 111: 'Message 111'
+[SEND] Unreliable SeqNo=112, Len=11, Data='Message 112...'
+[SEND] Message 112: 'Message 112'
+[SEND] Unreliable SeqNo=113, Len=11, Data='Message 113...'
+[SEND] Message 113: 'Message 113'
+[SEND] Unreliable SeqNo=114, Len=11, Data='Message 114...'
+[SEND] Message 114: 'Message 114'
+[SEND] Unreliable SeqNo=115, Len=11, Data='Message 115...'
+[SEND] Message 115: 'Message 115'
+[SEND] Unreliable SeqNo=116, Len=11, Data='Message 116...'
+[SEND] Message 116: 'Message 116'
+[SEND] Unreliable SeqNo=117, Len=11, Data='Message 117...'
+[SEND] Message 117: 'Message 117'
+[SEND] Unreliable SeqNo=118, Len=11, Data='Message 118...'
+[SEND] Message 118: 'Message 118'
+[SEND] Unreliable SeqNo=119, Len=11, Data='Message 119...'
+[SEND] Message 119: 'Message 119'
+[SEND] Unreliable SeqNo=120, Len=11, Data='Message 120...'
+[SEND] Message 120: 'Message 120'
+[SEND] Unreliable SeqNo=121, Len=11, Data='Message 121...'
+[SEND] Message 121: 'Message 121'
+[SEND] Unreliable SeqNo=122, Len=11, Data='Message 122...'
+[SEND] Message 122: 'Message 122'
+[SEND] Unreliable SeqNo=123, Len=11, Data='Message 123...'
+[SEND] Message 123: 'Message 123'
+[SEND] Unreliable SeqNo=124, Len=11, Data='Message 124...'
+[SEND] Message 124: 'Message 124'
+[SEND] Unreliable SeqNo=125, Len=11, Data='Message 125...'
+[SEND] Message 125: 'Message 125'
+[SEND] Unreliable SeqNo=126, Len=11, Data='Message 126...'
+[SEND] Message 126: 'Message 126'
+[SEND] Unreliable SeqNo=127, Len=11, Data='Message 127...'
+[SEND] Message 127: 'Message 127'
+[SEND] Unreliable SeqNo=128, Len=11, Data='Message 128...'
+[SEND] Message 128: 'Message 128'
+[SEND] Unreliable SeqNo=129, Len=11, Data='Message 129...'
+[SEND] Message 129: 'Message 129'
+[SEND] Unreliable SeqNo=130, Len=11, Data='Message 130...'
+[SEND] Message 130: 'Message 130'
+[SEND] Unreliable SeqNo=131, Len=11, Data='Message 131...'
+[SEND] Message 131: 'Message 131'
+[SEND] Unreliable SeqNo=132, Len=11, Data='Message 132...'
+[SEND] Message 132: 'Message 132'
+[SEND] Unreliable SeqNo=133, Len=11, Data='Message 133...'
+[SEND] Message 133: 'Message 133'
+[SEND] Unreliable SeqNo=134, Len=11, Data='Message 134...'
+[SEND] Message 134: 'Message 134'
+[SEND] Unreliable SeqNo=135, Len=11, Data='Message 135...'
+[SEND] Message 135: 'Message 135'
+[SEND] Unreliable SeqNo=136, Len=11, Data='Message 136...'
+[SEND] Message 136: 'Message 136'
+[SEND] Unreliable SeqNo=137, Len=11, Data='Message 137...'
+[SEND] Message 137: 'Message 137'
+[SEND] Unreliable SeqNo=138, Len=11, Data='Message 138...'
+[SEND] Message 138: 'Message 138'
+[SEND] Unreliable SeqNo=139, Len=11, Data='Message 139...'
+[SEND] Message 139: 'Message 139'
+[SEND] Unreliable SeqNo=140, Len=11, Data='Message 140...'
+[SEND] Message 140: 'Message 140'
+[SEND] Unreliable SeqNo=141, Len=11, Data='Message 141...'
+[SEND] Message 141: 'Message 141'
+[SEND] Unreliable SeqNo=142, Len=11, Data='Message 142...'
+[SEND] Message 142: 'Message 142'
+[SEND] Unreliable SeqNo=143, Len=11, Data='Message 143...'
+[SEND] Message 143: 'Message 143'
+[SEND] Unreliable SeqNo=144, Len=11, Data='Message 144...'
+[SEND] Message 144: 'Message 144'
+[SEND] Unreliable SeqNo=145, Len=11, Data='Message 145...'
+[SEND] Message 145: 'Message 145'
+[SEND] Unreliable SeqNo=146, Len=11, Data='Message 146...'
+[SEND] Message 146: 'Message 146'
+[SEND] Unreliable SeqNo=147, Len=11, Data='Message 147...'
+[SEND] Message 147: 'Message 147'
+[SEND] Unreliable SeqNo=148, Len=11, Data='Message 148...'
+[SEND] Message 148: 'Message 148'
+[SEND] Unreliable SeqNo=149, Len=11, Data='Message 149...'
+[SEND] Message 149: 'Message 149'
+[SEND] Unreliable SeqNo=150, Len=11, Data='Message 150...'
+[SEND] Message 150: 'Message 150'
+[SEND] Unreliable SeqNo=151, Len=11, Data='Message 151...'
+[SEND] Message 151: 'Message 151'
+[SEND] Unreliable SeqNo=152, Len=11, Data='Message 152...'
+[SEND] Message 152: 'Message 152'
+[SEND] Unreliable SeqNo=153, Len=11, Data='Message 153...'
+[SEND] Message 153: 'Message 153'
+[SEND] Unreliable SeqNo=154, Len=11, Data='Message 154...'
+[SEND] Message 154: 'Message 154'
+[SEND] Unreliable SeqNo=155, Len=11, Data='Message 155...'
+[SEND] Message 155: 'Message 155'
+[SEND] Unreliable SeqNo=156, Len=11, Data='Message 156...'
+[SEND] Message 156: 'Message 156'
+[SEND] Unreliable SeqNo=157, Len=11, Data='Message 157...'
+[SEND] Message 157: 'Message 157'
+[SEND] Unreliable SeqNo=158, Len=11, Data='Message 158...'
+[SEND] Message 158: 'Message 158'
+[SEND] Unreliable SeqNo=159, Len=11, Data='Message 159...'
+[SEND] Message 159: 'Message 159'
+[SEND] Unreliable SeqNo=160, Len=11, Data='Message 160...'
+[SEND] Message 160: 'Message 160'
+[SEND] Unreliable SeqNo=161, Len=11, Data='Message 161...'
+[SEND] Message 161: 'Message 161'
+[SEND] Unreliable SeqNo=162, Len=11, Data='Message 162...'
+[SEND] Message 162: 'Message 162'
+[SEND] Unreliable SeqNo=163, Len=11, Data='Message 163...'
+[SEND] Message 163: 'Message 163'
+[SEND] Unreliable SeqNo=164, Len=11, Data='Message 164...'
+[SEND] Message 164: 'Message 164'
+[SEND] Unreliable SeqNo=165, Len=11, Data='Message 165...'
+[SEND] Message 165: 'Message 165'
+[SEND] Unreliable SeqNo=166, Len=11, Data='Message 166...'
+[SEND] Message 166: 'Message 166'
+[SEND] Unreliable SeqNo=167, Len=11, Data='Message 167...'
+[SEND] Message 167: 'Message 167'
+[SEND] Unreliable SeqNo=168, Len=11, Data='Message 168...'
+[SEND] Message 168: 'Message 168'
+[SEND] Unreliable SeqNo=169, Len=11, Data='Message 169...'
+[SEND] Message 169: 'Message 169'
+[SEND] Unreliable SeqNo=170, Len=11, Data='Message 170...'
+[SEND] Message 170: 'Message 170'
+[SEND] Unreliable SeqNo=171, Len=11, Data='Message 171...'
+[SEND] Message 171: 'Message 171'
+[SEND] Unreliable SeqNo=172, Len=11, Data='Message 172...'
+[SEND] Message 172: 'Message 172'
+[SEND] Unreliable SeqNo=173, Len=11, Data='Message 173...'
+[SEND] Message 173: 'Message 173'
+[SEND] Unreliable SeqNo=174, Len=11, Data='Message 174...'
+[SEND] Message 174: 'Message 174'
+[SEND] Unreliable SeqNo=175, Len=11, Data='Message 175...'
+[SEND] Message 175: 'Message 175'
+[SEND] Unreliable SeqNo=176, Len=11, Data='Message 176...'
+[SEND] Message 176: 'Message 176'
+[SEND] Unreliable SeqNo=177, Len=11, Data='Message 177...'
+[SEND] Message 177: 'Message 177'
+[SEND] Unreliable SeqNo=178, Len=11, Data='Message 178...'
+[SEND] Message 178: 'Message 178'
+[SEND] Unreliable SeqNo=179, Len=11, Data='Message 179...'
+[SEND] Message 179: 'Message 179'
+[SEND] Unreliable SeqNo=180, Len=11, Data='Message 180...'
+[SEND] Message 180: 'Message 180'
+[SEND] Unreliable SeqNo=181, Len=11, Data='Message 181...'
+[SEND] Message 181: 'Message 181'
+[SEND] Unreliable SeqNo=182, Len=11, Data='Message 182...'
+[SEND] Message 182: 'Message 182'
+[SEND] Unreliable SeqNo=183, Len=11, Data='Message 183...'
+[SEND] Message 183: 'Message 183'
+[SEND] Unreliable SeqNo=184, Len=11, Data='Message 184...'
+[SEND] Message 184: 'Message 184'
+[SEND] Unreliable SeqNo=185, Len=11, Data='Message 185...'
+[SEND] Message 185: 'Message 185'
+[SEND] Unreliable SeqNo=186, Len=11, Data='Message 186...'
+[SEND] Message 186: 'Message 186'
+[SEND] Unreliable SeqNo=187, Len=11, Data='Message 187...'
+[SEND] Message 187: 'Message 187'
+[SEND] Unreliable SeqNo=188, Len=11, Data='Message 188...'
+[SEND] Message 188: 'Message 188'
+[SEND] Unreliable SeqNo=189, Len=11, Data='Message 189...'
+[SEND] Message 189: 'Message 189'
+[SEND] Unreliable SeqNo=190, Len=11, Data='Message 190...'
+[SEND] Message 190: 'Message 190'
+[SEND] Unreliable SeqNo=191, Len=11, Data='Message 191...'
+[SEND] Message 191: 'Message 191'
+[SEND] Unreliable SeqNo=192, Len=11, Data='Message 192...'
+[SEND] Message 192: 'Message 192'
+[SEND] Unreliable SeqNo=193, Len=11, Data='Message 193...'
+[SEND] Message 193: 'Message 193'
+[SEND] Unreliable SeqNo=194, Len=11, Data='Message 194...'
+[SEND] Message 194: 'Message 194'
+[SEND] Unreliable SeqNo=195, Len=11, Data='Message 195...'
+[SEND] Message 195: 'Message 195'
+[SEND] Unreliable SeqNo=196, Len=11, Data='Message 196...'
+[SEND] Message 196: 'Message 196'
+[SEND] Unreliable SeqNo=197, Len=11, Data='Message 197...'
+[SEND] Message 197: 'Message 197'
+[SEND] Unreliable SeqNo=198, Len=11, Data='Message 198...'
+[SEND] Message 198: 'Message 198'
+[SEND] Unreliable SeqNo=199, Len=11, Data='Message 199...'
+[SEND] Message 199: 'Message 199'
+[SEND] Unreliable SeqNo=200, Len=11, Data='Message 200...'
+[SEND] Message 200: 'Message 200'
+
+Waiting for all messages to be delivered...
+
+=== PERFORMANCE METRICS [Sender-Unreliable messages] ===
+Duration:                     21.28s
+Total Packets Sent:           200
+Send Throughput:              98.29 bytes/sec
+
+-- Reliable Channel --
+Packets Sent:                 0
+Send Throughput:              0.00 bytes/sec
+Average RTT:                  0.00 ms
+Packet Delivery Ratio:        N/A (requires receiver data)
+
+-- Unreliable Channel --
+Packets Sent:                 200
+Send Throughput:              98.29 bytes/sec
+Packet Delivery Ratio:        N/A (requires receiver data)
+============================================================
+
+[INFO] Sender metrics saved to results/Sender-Unreliable messages.json
+[DEBUG] Event received: ConnectionTerminated
+[Sender] Connection closed
+======================================================================
+TEST RESULTS: Unreliable messages
+======================================================================
+Messages sent:     200
+Messages received: 4000
+
+Ordering check: ✓ PASS
+Result: Unreliable messages - ordering not guaranteed
+======================================================================
+
+
+[Main] Stopping receiver...
+[Main] Receiver stopped gracefully
+
+======================================================================
+TEST SUITE SUMMARY
+======================================================================
+Test 1: Small reliable batch: ✗ FAIL
+Test 2: Large reliable batch: ✗ FAIL
+Test 3: Rapid reliable messages: ✗ FAIL
+Test 4: Unreliable messages: ✓ PASS
+======================================================================
+OVERALL: ✗ SOME TESTS FAILED
+======================================================================
+

@@ -58,17 +58,30 @@ async def check_metrics_trigger():
                 
                 # Only process if this is a new test (avoid duplicate processing)
                 if test_label != LAST_TEST_NAME:
-                    LAST_TEST_NAME = test_label
-                    print(f"[ReceiverRunner] Saving metrics for test: {test_label}", flush=True)
+                    print(f"[ReceiverRunner] Trigger detected for test: {test_label}", flush=True)
+                    print(f"[ReceiverRunner] Waiting 1 second for final packets...", flush=True)
                     
+                    # Short wait for any final packets
+                    await asyncio.sleep(1.0)
+                    
+                    # Save metrics immediately
+                    print(f"[ReceiverRunner] Saving metrics for test: {test_label}", flush=True)
                     recv_api.compute_metrics(label=f"Receiver-{test_label}")
                     print(f"[ReceiverRunner] Metrics saved to results/Receiver-{test_label}.json", flush=True)
+                    
+                    # Reset metrics NOW for the next test
+                    print(f"[ReceiverRunner] Resetting metrics for next test", flush=True)
+                    recv_api.metrics.reset()
+                    
+                    LAST_TEST_NAME = test_label
                     
                     # Remove trigger file after processing
                     try:
                         os.remove(METRICS_TRIGGER_FILE)
                     except:
                         pass
+            except Exception as e:
+                print(f"[ReceiverRunner] Error processing metrics trigger: {e}", flush=True)
             except Exception as e:
                 print(f"[ReceiverRunner] Error processing metrics trigger: {e}", flush=True)
 
