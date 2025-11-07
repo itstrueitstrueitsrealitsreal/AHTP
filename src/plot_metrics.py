@@ -70,7 +70,7 @@ for f in receiver_files:
     except Exception as e:
         print(f"[WARN] Skipping receiver file {f}: {e}")
 
-# Average multiple receiver runs (if you ran several tests)
+# Average multiple receiver runs
 df_recv = pd.DataFrame(receiver_rows)
 if not df_recv.empty:
     df_recv["label"] = "Receiver-Aggregated"
