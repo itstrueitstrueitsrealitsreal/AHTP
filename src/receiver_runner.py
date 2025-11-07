@@ -40,16 +40,21 @@ def handle_packet(seqno, channel_type, payload, timestamp):
 async def check_metrics_trigger():
     """Periodically check if metrics should be saved"""
     global LAST_TEST_NAME
-    recv_api = Receiver.get_latest_api()
+    recv_api = None
     last_check_time = 0
     
     while True:
         await asyncio.sleep(0.5)
-        
-        if not recv_api:
-            recv_api = Receiver.get_latest_api()
+
+        # Always fetch the latest API; switch when it changes
+        latest_api = Receiver.get_latest_api()
+        if latest_api is None:
             continue
-            
+        if recv_api is not latest_api:
+            recv_api = latest_api
+            # Optional: reset metrics when a new connection arrives
+            recv_api.reset_metrics()
+
         if os.path.exists(METRICS_TRIGGER_FILE):
             # Read the test label from the trigger file
             try:
@@ -63,6 +68,9 @@ async def check_metrics_trigger():
                     
                     recv_api.compute_metrics(label=f"Receiver-{test_label}")
                     print(f"[ReceiverRunner] Metrics saved to results/Receiver-{test_label}.json", flush=True)
+    
+                    # Reset metrics to avoid accumulation into next test
+                    recv_api.reset_metrics()
                     
                     # Remove trigger file after processing
                     try:

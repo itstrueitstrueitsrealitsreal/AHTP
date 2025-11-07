@@ -382,6 +382,9 @@ class GameNetAPI:
                     if expected_seqno in self.missing_packet_timers:
                         del self.missing_packet_timers[expected_seqno]
 
+    def reset_metrics(self):
+        self.metrics.reset()
+
     def compute_metrics(self, label: str = ""):
         """Print performance metrics using NetworkMetrics component"""
         report = self.metrics.get_metrics_report(label=label)

@@ -21,18 +21,48 @@ class NetworkMetrics:
         self.bytes_recv_reliable = 0
         self.bytes_recv_unreliable = 0
 
-        # Latency tracking (receiver measures one-way, sender measures RTT)
-        self.rtt_records: List[float] = []  # Sender-side RTT
-        self.one_way_latency_reliable: List[float] = []  # Receiver-side
-        self.one_way_latency_unreliable: List[float] = []  # Receiver-side
-
-        # Jitter calculation (RFC3550) - receiver-side
+        # Latency and jitter
+        self.rtt_records = []
+        self.one_way_latency_reliable = []
+        self.one_way_latency_unreliable = []
         self.jitter_reliable = 0.0
         self.jitter_unreliable = 0.0
         self.last_transit_reliable = None
         self.last_transit_unreliable = None
 
-        # Sequence number tracking (receiver-side for loss calculation)
+        # Sequence tracking
+        self.max_seen_reliable_seqno = 0
+        self.max_seen_unreliable_seqno = 0
+        self.received_reliable_seqnos = set()
+        self.received_unreliable_seqnos = set()
+
+    def reset(self):
+        self.start_time = time.time()
+
+        # Sender-side counters
+        self.total_sent = 0
+        self.total_sent_reliable = 0
+        self.total_sent_unreliable = 0
+        self.bytes_sent_reliable = 0
+        self.bytes_sent_unreliable = 0
+
+        # Receiver-side counters
+        self.total_received = 0
+        self.total_recv_reliable = 0
+        self.total_recv_unreliable = 0
+        self.bytes_recv_reliable = 0
+        self.bytes_recv_unreliable = 0
+
+        # Latency and jitter
+        self.rtt_records = []
+        self.one_way_latency_reliable = []
+        self.one_way_latency_unreliable = []
+        self.jitter_reliable = 0.0
+        self.jitter_unreliable = 0.0
+        self.last_transit_reliable = None
+        self.last_transit_unreliable = None
+
+        # Sequence tracking
         self.max_seen_reliable_seqno = 0
         self.max_seen_unreliable_seqno = 0
         self.received_reliable_seqnos = set()

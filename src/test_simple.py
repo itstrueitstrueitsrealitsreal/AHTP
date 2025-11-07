@@ -28,6 +28,12 @@ async def sender_example():
     
     async with await Sender.create_sender("127.0.0.1", 4433) as api:
         
+        # Reset metrics to ensure a clean run (sender + receiver)
+        api.reset_metrics()
+        recv_api = Receiver.get_latest_api()
+        if recv_api:
+            recv_api.reset_metrics()
+
         # Send 3 reliable packets slowly
         for i in range(3):
             print(f"\n--- Sending packet {i+1} ---")
