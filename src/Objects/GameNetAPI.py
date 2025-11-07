@@ -100,7 +100,8 @@ class GameNetAPI:
         header = struct.pack("!BHIH", channel_type, seqno, timestamp, payload_len)
         packet_data = header + payload
 
-        # Note: Metrics are recorded on receiver side only
+        # Record sender-side metrics
+        self.metrics.record_packet_sent(payload_len, is_reliable)
 
         if is_reliable:
             # Track for retransmission
@@ -137,7 +138,9 @@ class GameNetAPI:
         # Mark all packets up to seqno as acked
         for seq in range(self.base, min(seqno + 1, self.next_seqno)):
             if seq in self.pending_acks:
-                # No need to record RTT - metrics are receiver-side only
+                # Record RTT for sender-side metrics
+                rtt = time.time() - self.pending_acks[seq]["first_sent"]
+                self.metrics.record_rtt(rtt)
                 del self.pending_acks[seq]
             self.acked_packets.add(seq)
 
