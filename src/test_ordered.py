@@ -38,8 +38,6 @@ async def send_test_messages(num_messages=100, reliability_type='reliable', dela
         # Wait for all messages to be processed
         print(f"\nWaiting for all messages to be delivered...")
         await asyncio.sleep(1.0)  # Allow time for delivery
-        
-        # Generate metrics from sender side
         api.compute_metrics(label=f"Sender-{type}")
         print(f"[INFO] Sender metrics saved to results/Sender-{type}.json")
 
